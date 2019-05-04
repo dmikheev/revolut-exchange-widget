@@ -1,11 +1,11 @@
 import { Currency } from '../constants/currencies';
 
 interface IApiResponse {
-    base: Currency;
-    date: string;
-    rates: {
-        [key in Currency]: number;
-    };
+  base: Currency;
+  date: string;
+  rates: {
+    [key in Currency]: number;
+  };
 }
 
 function getUrlForCurrency(cur: Currency): string {
@@ -13,15 +13,15 @@ function getUrlForCurrency(cur: Currency): string {
 }
 
 const erApi = {
-    get(baseCurrency: Currency): Promise<IApiResponse> {
-        return fetch(getUrlForCurrency(baseCurrency))
-            .then((response) => {
-                if (!response.ok) {
-                    throw response;
-                }
+  get(baseCurrency: Currency): Promise<IApiResponse> {
+    return fetch(getUrlForCurrency(baseCurrency))
+      .then((response) => {
+        if (!response.ok) {
+          throw response;
+        }
 
-                return response.json();
-            });
-    },
+        return response.json();
+      });
+  },
 };
 export default erApi;

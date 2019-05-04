@@ -1,4 +1,4 @@
-import { AnyAction } from 'redux';
+import { IBalanceAction } from './balanceActions';
 
 export type IAppAction =
-  AnyAction;
+  IBalanceAction;

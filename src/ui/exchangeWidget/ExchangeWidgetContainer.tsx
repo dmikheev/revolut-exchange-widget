@@ -16,12 +16,7 @@ interface IExchangeWidgetContainerOwnProps {
   balances: IBalancesState;
   currencies: Currency[];
 
-  onExchange(
-    currencyFrom: Currency,
-    amountFrom: number,
-    currencyTo: Currency,
-    amountTo: number,
-  ): void;
+  onExchange(currencyFrom: Currency, amountFrom: number, currencyTo: Currency): void;
 }
 interface IExchangeWidgetContainerStateProps {
   rates: IRatesState;
@@ -146,15 +141,14 @@ class ExchangeWidgetContainer
 
   private onExchangeClick = (): void => {
     const { onExchange } = this.props;
-    const { amountFromStr, amountToStr, currencyFrom, currencyTo } = this.state;
+    const { amountFromStr, currencyFrom, currencyTo } = this.state;
     const amountFrom = parseFloat(amountFromStr);
-    const amountTo = parseFloat(amountToStr);
 
-    if (isNaN(amountFrom) || isNaN(amountTo)) {
+    if (isNaN(amountFrom)) {
       return;
     }
 
-    onExchange(currencyFrom, amountFrom, currencyTo, amountTo);
+    onExchange(currencyFrom, amountFrom, currencyTo);
 
     this.setState({
       amountFromStr: '',

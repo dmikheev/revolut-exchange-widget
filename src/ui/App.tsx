@@ -13,12 +13,7 @@ interface IAppStateProps {
   balances: IBalancesState;
 }
 interface IAppDispatchProps {
-  exchangeCurrency(
-    currencyFrom: Currency,
-    amountFrom: number,
-    currencyTo: Currency,
-    amountTo: number,
-  ): void;
+  exchangeCurrency(currencyFrom: Currency, amountFrom: number, currencyTo: Currency): void;
 }
 
 type IAppProps = IAppStateProps & IAppDispatchProps;

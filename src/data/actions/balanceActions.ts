@@ -1,4 +1,6 @@
+import { Dispatch } from 'redux';
 import { Currency } from '../../constants/currencies';
+import { IRootState } from '../reducers/rootState';
 
 export enum BalanceActionType {
   EXCHANGE_CURRENCY = 'EXCHANGE_CURRENCY',
@@ -19,16 +21,29 @@ export const exchangeCurrency = (
   currencyFrom: Currency,
   amountFrom: number,
   currencyTo: Currency,
-  amountTo: number,
-) => ({
-  data: {
-    amountFrom,
-    amountTo,
-    currencyFrom,
-    currencyTo,
-  },
-  type: BalanceActionType.EXCHANGE_CURRENCY,
-});
+) => (dispatch: Dispatch, getState: () => IRootState) => {
+  const state = getState();
+
+  const currencyToData = state.rates[currencyTo];
+  if (!currencyToData || !currencyToData.isLoaded) {
+    return;
+  }
+
+  const rate = currencyToData.rates[currencyFrom];
+  if (rate === undefined) {
+    return;
+  }
+
+  return dispatch({
+    data: {
+      amountFrom,
+      amountTo: amountFrom / rate,
+      currencyFrom,
+      currencyTo,
+    },
+    type: BalanceActionType.EXCHANGE_CURRENCY,
+  });
+};
 
 export type IBalanceAction =
   IExchangeCurrencyAction;

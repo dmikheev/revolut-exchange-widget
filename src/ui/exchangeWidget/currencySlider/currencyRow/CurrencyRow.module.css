@@ -1,0 +1,12 @@
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+.currency {
+  margin-bottom: 0;
+}
+
+.balance {
+  opacity: 0.7;
+}

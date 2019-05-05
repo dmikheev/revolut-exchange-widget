@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { Currency } from './constants/currencies';
 import createStore from './data/store';
-import './index.css';
 import App from './ui/App';
 
 const store = createStore({

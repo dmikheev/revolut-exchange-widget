@@ -1,0 +1,19 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.row {
+  flex-grow: 1;
+}
+.row:first-child {
+  background-color: inherit;
+  filter: drop-shadow(0 0 1px #000);
+}
+
+.button_row {
+  text-align: center;
+  padding: 0 10% 20px;
+  box-sizing: border-box;
+}

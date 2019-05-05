@@ -3,3 +3,9 @@ export enum Currency {
     EUR = 'EUR',
     GBP = 'GBP',
 }
+
+export const SymbolByCurrency = {
+    [Currency.USD]: '$',
+    [Currency.EUR]: '€',
+    [Currency.GBP]: '£',
+};

@@ -1,30 +1,36 @@
 import classNames from 'classnames';
 import React from 'react';
 import { Currency } from '../../../constants/currencies';
-import { IBalancesData } from '../dataTypes';
-import CurrencyRowContainer from './currencyRow/CurrencyRowContainer';
+import CurrencyRow from './currencyRow/CurrencyRow';
 
 import styles from './CurrencySlider.module.css';
 
 interface ICurrencySliderProps {
   className?: string;
-  balances: IBalancesData;
+  amountStr: string;
+  balance: number;
   currencies: Currency[];
   currentCurrency: Currency;
   sourceCurrency: Currency;
+  isRateFetching: boolean;
   isSourceCurrency?: boolean;
-  isTriangleShown?: boolean;
+  rate?: number;
   triangleBackgroundColor?: string;
+  onAmountChange(amount: string): void;
+  onCurrencyChange(currency: Currency): void;
 }
 const CurrencySlider: React.FC<ICurrencySliderProps> = ({
-  balances,
+  amountStr,
+  balance,
   className,
   currencies,
   currentCurrency,
   sourceCurrency,
+  isRateFetching,
   isSourceCurrency,
-  isTriangleShown,
+  rate,
   triangleBackgroundColor,
+  onAmountChange,
 }) => {
   if (currencies.length < 1) {
     throw new Error(`Empty currencies list is not allowed in CurrencySlider!`);
@@ -32,24 +38,26 @@ const CurrencySlider: React.FC<ICurrencySliderProps> = ({
 
   const wrapClassName = classNames(
     styles.wrap,
-    isTriangleShown && styles.wrap__with_triangle,
+    isSourceCurrency && styles.wrap__with_triangle,
     className,
   );
 
-  const balance = balances[currentCurrency] || 0;
-
-  const triangleHtml = isTriangleShown && (
+  const triangleHtml = isSourceCurrency && (
     <div className={styles.triangle} style={{ borderTopColor: triangleBackgroundColor }}/>
   );
 
   return (
     <div className={wrapClassName}>
-      <CurrencyRowContainer
+      <CurrencyRow
         className={styles.row}
+        amountStr={amountStr}
+        balance={balance}
         currency={currentCurrency}
         sourceCurrency={sourceCurrency}
-        balance={balance}
+        isRateFetching={isRateFetching}
         isSourceCurrency={isSourceCurrency}
+        rate={rate}
+        onAmountChange={onAmountChange}
       />
       {triangleHtml}
     </div>

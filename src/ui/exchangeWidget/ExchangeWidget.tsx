@@ -3,54 +3,78 @@ import classNames from 'classnames';
 import React from 'react';
 import { Currency } from '../../constants/currencies';
 import CurrencySlider from './currencySlider/CurrencySlider';
-import { IBalancesData } from './dataTypes';
 
 import styles from './ExchangeWidget.module.css';
 
-interface IExchangeWidgetOwnProps {
+interface IExchangeWidgetProps {
   backgroundColor: string;
   className?: string;
-  balances: IBalancesData;
+  amountFromStr: string;
+  amountToStr: string;
+  balanceFrom: number;
+  balanceTo: number;
   currencies: Currency[];
+  currencyFrom: Currency;
+  currencyTo: Currency;
+  isRateFetching: boolean;
+  rateTo?: number;
 
-  onExchange(
-    currencyFrom: Currency,
-    amountFrom: number,
-    currencyTo: Currency,
-    amountTo: number,
-  ): void;
+  onAmountFromChange(value: string): void;
+  onAmountToChange(value: string): void;
+  onCurrencyFromChange(currency: Currency): void;
+  onCurrencyToChange(currency: Currency): void;
+  onExchange(): void;
 }
-const ExchangeWidget: React.FC<IExchangeWidgetOwnProps> = ({
+const ExchangeWidget: React.FC<IExchangeWidgetProps> = ({
   backgroundColor,
-  balances,
   className,
+  amountFromStr,
+  amountToStr,
+  balanceFrom,
+  balanceTo,
   currencies,
-}) => {
-  return (
-    <div className={classNames(styles.wrap, className)} style={{ backgroundColor }}>
-      <CurrencySlider
-        className={styles.row}
-        currencies={currencies}
-        currentCurrency={Currency.USD}
-        sourceCurrency={Currency.USD}
-        isSourceCurrency={true}
-        isTriangleShown={true}
-        triangleBackgroundColor={backgroundColor}
-        balances={balances}
-      />
-      <CurrencySlider
-        className={styles.row}
-        currencies={currencies}
-        currentCurrency={Currency.EUR}
-        sourceCurrency={Currency.USD}
-        balances={balances}
-      />
-      <div className={styles.button_row}>
-        <Button variant="contained" color="primary" size="large">
-          Exchange
-        </Button>
-      </div>
+  currencyFrom,
+  currencyTo,
+  isRateFetching,
+  rateTo,
+  onAmountFromChange,
+  onAmountToChange,
+  onCurrencyFromChange,
+  onCurrencyToChange,
+  onExchange,
+}) => (
+  <div className={classNames(styles.wrap, className)} style={{ backgroundColor }}>
+    <CurrencySlider
+      className={styles.row}
+      amountStr={amountFromStr}
+      balance={balanceFrom}
+      currencies={currencies}
+      currentCurrency={currencyFrom}
+      sourceCurrency={currencyFrom}
+      isRateFetching={isRateFetching}
+      isSourceCurrency={true}
+      triangleBackgroundColor={backgroundColor}
+      onAmountChange={onAmountFromChange}
+      onCurrencyChange={onCurrencyFromChange}
+    />
+    <CurrencySlider
+      className={styles.row}
+      amountStr={amountToStr}
+      balance={balanceTo}
+      currencies={currencies}
+      currentCurrency={currencyTo}
+      sourceCurrency={currencyFrom}
+      isRateFetching={isRateFetching}
+      isSourceCurrency={false}
+      rate={rateTo}
+      onAmountChange={onAmountToChange}
+      onCurrencyChange={onCurrencyToChange}
+    />
+    <div className={styles.button_row}>
+      <Button variant="contained" color="primary" size="large" onClick={onExchange}>
+        Exchange
+      </Button>
     </div>
-  );
-};
+  </div>
+);
 export default ExchangeWidget;

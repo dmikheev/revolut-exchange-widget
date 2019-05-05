@@ -5,7 +5,7 @@ import { bindActionCreators, Dispatch } from 'redux';
 import { Currency } from '../constants/currencies';
 import { exchangeCurrency } from '../data/actions/balanceActions';
 import { IBalancesState, IRootState } from '../data/reducers/rootState';
-import ExchangeWidget from './exchangeWidget/ExchangeWidget';
+import ExchangeWidgetContainer from './exchangeWidget/ExchangeWidgetContainer';
 
 import styles from './App.module.css';
 
@@ -28,7 +28,7 @@ const App: React.FC<IAppProps> = ({ balances, exchangeCurrency: exchangeCurrency
       Exchange widget demo
     </Typography>
     <Paper className={styles.widget_wrap}>
-      <ExchangeWidget
+      <ExchangeWidgetContainer
         backgroundColor="#fafafa"
         className={styles.widget}
         currencies={Object.values(Currency)}

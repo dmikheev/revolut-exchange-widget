@@ -10,37 +10,48 @@ import {
 import { TextFieldProps } from '@material-ui/core/TextField';
 import classNames from 'classnames';
 import React from 'react';
-import { Currency } from '../../../../constants/currencies';
-import { ICurrencyData } from '../../../../data/reducers/rootState';
+import { Currency, SymbolByCurrency } from '../../../../constants/currencies';
+import { cashFormat } from '../../../../utils/cashFormat';
 
 import styles from './CurrencyRow.module.css';
 
 interface ICurrencyRowProps {
   className?: string;
+  amountStr: string;
   balance: number;
   currency: Currency;
-  currencyData?: ICurrencyData;
-  isSourceCurrency?: boolean;
   sourceCurrency: Currency;
+  isRateFetching: boolean;
+  isSourceCurrency?: boolean;
+  rate?: number;
+  onAmountChange(amount: string): void;
 }
 const CurrencyRow: React.FC<ICurrencyRowProps> = ({
   className,
+  amountStr,
   balance,
   currency,
-  currencyData,
-  isSourceCurrency,
   sourceCurrency,
+  isRateFetching,
+  isSourceCurrency,
+  rate,
+  onAmountChange,
 }) => {
+  const onInputChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => onAmountChange(event.target.value),
+    [onAmountChange],
+  );
+
   let amountColumnHtml;
   if (isSourceCurrency || currency !== sourceCurrency) {
     let rateContentHtml;
-    if (!isSourceCurrency && currencyData) {
-      const rateValueHtml = currencyData.isLoaded && (
+    if (!isSourceCurrency) {
+      const rateValueHtml = rate !== undefined && (
         <Typography variant="body2" className={styles.note}>
-          1 {currency} = {currencyData.rates[sourceCurrency]} {sourceCurrency}
+          {SymbolByCurrency[currency]}1 = {SymbolByCurrency[sourceCurrency]}{cashFormat(rate)}
         </Typography>
       );
-      const rateProgressHtml = currencyData.isFetching && (
+      const rateProgressHtml = isRateFetching && (
         <CircularProgress className={styles.rate_progress} size="0.8em" color="secondary"/>
       );
 
@@ -54,7 +65,11 @@ const CurrencyRow: React.FC<ICurrencyRowProps> = ({
 
     amountColumnHtml = (
       <React.Fragment>
-        <StyledTextField InputProps={{ inputProps: { className: styles.input }}}/>
+        <StyledTextField
+          value={amountStr}
+          InputProps={{ inputProps: { className: styles.input }}}
+          onChange={onInputChange}
+        />
         <div className={styles.rate_wrap}>
           {rateContentHtml}
         </div>
@@ -69,7 +84,7 @@ const CurrencyRow: React.FC<ICurrencyRowProps> = ({
           {currency}
         </Typography>
         <Typography variant="body2" className={styles.note}>
-          You have {balance} {currency}
+          You have {SymbolByCurrency[currency]}{cashFormat(balance)}
         </Typography>
       </div>
       <div className={styles.column}>

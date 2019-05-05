@@ -25,28 +25,32 @@ const ExchangeWidget: React.FC<IExchangeWidgetOwnProps> = ({
   balances,
   className,
   currencies,
-}) => (
-  <div className={classNames(styles.wrap, className)} style={{ backgroundColor }}>
-    <CurrencySlider
-      className={styles.row}
-      currencies={currencies}
-      initialCurrency={Currency.USD}
-      isRateDisabled={true}
-      isTriangleShown={true}
-      triangleBackgroundColor={backgroundColor}
-      balances={balances}
-    />
-    <CurrencySlider
-      className={styles.row}
-      currencies={currencies}
-      initialCurrency={Currency.EUR}
-      balances={balances}
-    />
-    <div className={styles.button_row}>
-      <Button variant="contained" color="primary" size="large">
-        Exchange
-      </Button>
+}) => {
+  return (
+    <div className={classNames(styles.wrap, className)} style={{ backgroundColor }}>
+      <CurrencySlider
+        className={styles.row}
+        currencies={currencies}
+        currentCurrency={Currency.USD}
+        sourceCurrency={Currency.USD}
+        isSourceCurrency={true}
+        isTriangleShown={true}
+        triangleBackgroundColor={backgroundColor}
+        balances={balances}
+      />
+      <CurrencySlider
+        className={styles.row}
+        currencies={currencies}
+        currentCurrency={Currency.EUR}
+        sourceCurrency={Currency.USD}
+        balances={balances}
+      />
+      <div className={styles.button_row}>
+        <Button variant="contained" color="primary" size="large">
+          Exchange
+        </Button>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 export default ExchangeWidget;

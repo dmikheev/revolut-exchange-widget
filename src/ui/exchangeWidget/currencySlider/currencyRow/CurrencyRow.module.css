@@ -19,3 +19,19 @@
 .note {
   opacity: 0.7;
 }
+
+.input {
+  text-align: right;
+}
+
+.rate_wrap {
+  position: relative;
+  margin-left: auto;
+  min-height: 1.5em;
+}
+
+.rate_progress {
+  position: absolute;
+  top: 3px;
+  left: calc(100% + 4px);
+}

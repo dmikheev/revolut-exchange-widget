@@ -1,6 +1,6 @@
 import { Currency } from '../constants/currencies';
 
-interface IApiResponse {
+export interface IApiResponse {
   base: Currency;
   date: string;
   rates: {

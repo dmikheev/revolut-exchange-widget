@@ -1,4 +1,5 @@
 import {
+  CircularProgress,
   createStyles,
   TextField,
   Theme,
@@ -10,20 +11,57 @@ import { TextFieldProps } from '@material-ui/core/TextField';
 import classNames from 'classnames';
 import React from 'react';
 import { Currency } from '../../../../constants/currencies';
+import { ICurrencyData } from '../../../../data/reducers/rootState';
 
 import styles from './CurrencyRow.module.css';
 
-export interface ICurrencyRowProps {
+interface ICurrencyRowProps {
   className?: string;
   balance: number;
   currency: Currency;
-  isRateDisabled?: boolean;
+  currencyData?: ICurrencyData;
+  isSourceCurrency?: boolean;
+  sourceCurrency: Currency;
 }
 const CurrencyRow: React.FC<ICurrencyRowProps> = ({
   className,
   balance,
   currency,
+  currencyData,
+  isSourceCurrency,
+  sourceCurrency,
 }) => {
+  let amountColumnHtml;
+  if (isSourceCurrency || currency !== sourceCurrency) {
+    let rateContentHtml;
+    if (!isSourceCurrency && currencyData) {
+      const rateValueHtml = currencyData.isLoaded && (
+        <Typography variant="body2" className={styles.note}>
+          1 {currency} = {currencyData.rates[sourceCurrency]} {sourceCurrency}
+        </Typography>
+      );
+      const rateProgressHtml = currencyData.isFetching && (
+        <CircularProgress className={styles.rate_progress} size="0.8em" color="secondary"/>
+      );
+
+      rateContentHtml = (
+        <React.Fragment>
+          {rateValueHtml}
+          {rateProgressHtml}
+        </React.Fragment>
+      );
+    }
+
+    amountColumnHtml = (
+      <React.Fragment>
+        <StyledTextField InputProps={{ inputProps: { className: styles.input }}}/>
+        <div className={styles.rate_wrap}>
+          {rateContentHtml}
+        </div>
+      </React.Fragment>
+    );
+  }
+
   return (
     <div className={classNames(styles.wrap, className)}>
       <div className={styles.column}>
@@ -35,7 +73,7 @@ const CurrencyRow: React.FC<ICurrencyRowProps> = ({
         </Typography>
       </div>
       <div className={styles.column}>
-        <StyledTextField/>
+        {amountColumnHtml}
       </div>
     </div>
   );
@@ -50,6 +88,7 @@ type IStyledTextFieldComponentProps = TextFieldProps & WithStyles<typeof textFie
 const StyledTextFieldComponent: React.FC<IStyledTextFieldComponentProps> =
   ({ classes, ...restProps }) => {
     const inputProps = {
+      ...restProps.InputProps,
       classes: {
         root: classes.input,
       },

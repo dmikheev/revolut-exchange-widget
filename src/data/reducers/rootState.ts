@@ -30,4 +30,4 @@ interface ICurrencyDataNotLoaded extends ICurrencyDataBase {
   isLoaded: false;
   rates: undefined;
 }
-type ICurrencyData = ICurrencyDataLoaded | ICurrencyDataNotLoaded;
+export type ICurrencyData = ICurrencyDataLoaded | ICurrencyDataNotLoaded;

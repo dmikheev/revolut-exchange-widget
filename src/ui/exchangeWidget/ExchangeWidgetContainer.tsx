@@ -116,7 +116,7 @@ class ExchangeWidgetContainer
     const { currencyFrom, currencyTo } = this.state;
 
     this.setState({
-      amountFromStr: this.getAmountToStr(currencyTo, amountToStr, currencyFrom),
+      amountFromStr: this.getAmountToStr(currencyFrom, amountToStr, currencyTo, true),
       amountToStr,
     });
   };
@@ -165,7 +165,12 @@ class ExchangeWidgetContainer
       || undefined;
   }
 
-  private getAmountToStr(currencyFrom: Currency, amountFromStr: string, currencyTo: Currency): string {
+  private getAmountToStr(
+    currencyFrom: Currency,
+    amountFromStr: string,
+    currencyTo: Currency,
+    isInversed?: boolean,
+  ): string {
     let amountToStr = '';
     if (isCashStringValid(amountFromStr)) {
       const amountFrom = parseFloat(amountFromStr);
@@ -174,7 +179,8 @@ class ExchangeWidgetContainer
         const rate = this.getRateTo(currencyFrom, currencyTo);
 
         if (rate) {
-          amountToStr = cashFormat(amountFrom / rate);
+          const amountTo = isInversed ? amountFrom * rate : amountFrom / rate;
+          amountToStr = cashFormat(amountTo);
         }
       }
     }

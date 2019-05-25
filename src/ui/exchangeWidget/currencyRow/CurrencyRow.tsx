@@ -5,7 +5,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  TextField,
   Theme,
   Typography,
   WithStyles,
@@ -16,6 +15,7 @@ import classNames from 'classnames';
 import React from 'react';
 import { Currency, SymbolByCurrency } from '../../../constants/currencies';
 import { cashFormat } from '../../../utils/cashFormat';
+import CashInput from './CashInput';
 
 import styles from './CurrencyRow.module.css';
 
@@ -132,7 +132,7 @@ const StyledTextFieldComponent: React.FC<IStyledTextFieldComponentProps> =
     };
 
     return (
-      <TextField {...restProps} InputProps={inputProps}/>
+      <CashInput {...restProps} InputProps={inputProps}/>
     );
   };
 const StyledTextField = withStyles(textFieldStyles)(StyledTextFieldComponent);

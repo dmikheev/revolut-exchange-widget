@@ -5,11 +5,25 @@
 }
 
 .row {
-  flex-grow: 1;
+  height: 100%;
+  padding: 5% 10%;
 }
 .row:first-child {
+  position: relative;
   background-color: inherit;
   filter: drop-shadow(0 0 1px #000);
+}
+.row:first-child:after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 0;
+  border: 20px solid transparent;
+  border-bottom: none;
+  border-top-color: #fafafa;
 }
 
 .button_row {

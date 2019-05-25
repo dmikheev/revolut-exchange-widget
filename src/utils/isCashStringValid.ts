@@ -1,3 +1,3 @@
 export function isCashStringValid(value: string): boolean {
-  return /^\d+(?:\.\d{1,2})?$/g.test(value);
+  return /^\d*(?:\.\d{0,2})?$/g.test(value);
 }

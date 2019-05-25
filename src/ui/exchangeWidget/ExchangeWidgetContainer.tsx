@@ -7,6 +7,7 @@ import { IBalancesState, IRatesState, IRootState } from '../../data/reducers/roo
 import { cashFormat } from '../../utils/cashFormat';
 import { isCashStringValid } from '../../utils/isCashStringValid';
 import ExchangeWidget from './ExchangeWidget';
+import { parseCash } from "../../utils/parseCash";
 
 const UPDATE_RATES_INTERVAL = 10000;
 
@@ -142,7 +143,7 @@ class ExchangeWidgetContainer
   private onExchangeClick = (): void => {
     const { onExchange } = this.props;
     const { amountFromStr, currencyFrom, currencyTo } = this.state;
-    const amountFrom = parseFloat(amountFromStr);
+    const amountFrom = parseCash(amountFromStr);
 
     if (isNaN(amountFrom)) {
       return;
@@ -173,7 +174,7 @@ class ExchangeWidgetContainer
   ): string {
     let amountToStr = '';
     if (isCashStringValid(amountFromStr)) {
-      const amountFrom = parseFloat(amountFromStr);
+      const amountFrom = parseCash(amountFromStr);
 
       if (!isNaN(amountFrom)) {
         const rate = this.getRateTo(currencyFrom, currencyTo);

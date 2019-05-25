@@ -2,9 +2,9 @@ import { Button } from '@material-ui/core';
 import classNames from 'classnames';
 import React from 'react';
 import { Currency } from '../../constants/currencies';
-import CurrencySlider from './currencySlider/CurrencySlider';
 
 import styles from './ExchangeWidget.module.css';
+import CurrencyRow from "./currencyRow/CurrencyRow";
 
 interface IExchangeWidgetProps {
   backgroundColor: string;
@@ -44,25 +44,23 @@ const ExchangeWidget: React.FC<IExchangeWidgetProps> = ({
   onExchange,
 }) => (
   <div className={classNames(styles.wrap, className)} style={{ backgroundColor }}>
-    <CurrencySlider
+    <CurrencyRow
       className={styles.row}
       amountStr={amountFromStr}
       balance={balanceFrom}
       currencies={currencies}
-      currentCurrency={currencyFrom}
+      currency={currencyFrom}
       sourceCurrency={currencyFrom}
-      isRateFetching={isRateFetching}
       isSourceCurrency={true}
-      triangleBackgroundColor={backgroundColor}
       onAmountChange={onAmountFromChange}
       onCurrencyChange={onCurrencyFromChange}
     />
-    <CurrencySlider
+    <CurrencyRow
       className={styles.row}
       amountStr={amountToStr}
       balance={balanceTo}
       currencies={currencies}
-      currentCurrency={currencyTo}
+      currency={currencyTo}
       sourceCurrency={currencyFrom}
       isRateFetching={isRateFetching}
       isSourceCurrency={false}

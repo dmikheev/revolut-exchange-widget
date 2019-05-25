@@ -1,6 +1,10 @@
 import {
   CircularProgress,
   createStyles,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
   Theme,
   Typography,
@@ -10,8 +14,8 @@ import {
 import { TextFieldProps } from '@material-ui/core/TextField';
 import classNames from 'classnames';
 import React from 'react';
-import { Currency, SymbolByCurrency } from '../../../../constants/currencies';
-import { cashFormat } from '../../../../utils/cashFormat';
+import { Currency, SymbolByCurrency } from '../../../constants/currencies';
+import { cashFormat } from '../../../utils/cashFormat';
 
 import styles from './CurrencyRow.module.css';
 
@@ -19,24 +23,39 @@ interface ICurrencyRowProps {
   className?: string;
   amountStr: string;
   balance: number;
+  currencies: Currency[];
   currency: Currency;
   sourceCurrency: Currency;
-  isRateFetching: boolean;
+  isRateFetching?: boolean;
   isSourceCurrency?: boolean;
   rate?: number;
+
   onAmountChange(amount: string): void;
+
+  onCurrencyChange(currency: Currency): void;
 }
+
 const CurrencyRow: React.FC<ICurrencyRowProps> = ({
   className,
   amountStr,
   balance,
+  currencies,
   currency,
   sourceCurrency,
   isRateFetching,
   isSourceCurrency,
   rate,
   onAmountChange,
+  onCurrencyChange,
 }) => {
+  const selectItemsHtml = currencies.map((cur) => (
+    <MenuItem key={cur} value={cur}>{cur}</MenuItem>
+  ));
+
+  const onCurrencySelectChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLSelectElement>) => onCurrencyChange(event.target.value as Currency),
+    [onCurrencyChange],
+  );
   const onInputChange = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => onAmountChange(event.target.value),
     [onAmountChange],
@@ -67,7 +86,7 @@ const CurrencyRow: React.FC<ICurrencyRowProps> = ({
       <React.Fragment>
         <StyledTextField
           value={amountStr}
-          InputProps={{ inputProps: { className: styles.input }}}
+          InputProps={{inputProps: {className: styles.input}}}
           onChange={onInputChange}
         />
         <div className={styles.rate_wrap}>
@@ -80,9 +99,12 @@ const CurrencyRow: React.FC<ICurrencyRowProps> = ({
   return (
     <div className={classNames(styles.wrap, className)}>
       <div className={styles.column}>
-        <Typography variant="h3">
-          {currency}
-        </Typography>
+        <FormControl>
+          <InputLabel>{isSourceCurrency ? 'From' : 'To'}</InputLabel>
+          <Select value={currency} onChange={onCurrencySelectChange}>
+            {selectItemsHtml}
+          </Select>
+        </FormControl>
         <Typography variant="body2" className={styles.note}>
           You have {SymbolByCurrency[currency]}{cashFormat(balance)}
         </Typography>
@@ -101,7 +123,7 @@ const textFieldStyles = (theme: Theme) => createStyles({
 
 type IStyledTextFieldComponentProps = TextFieldProps & WithStyles<typeof textFieldStyles>;
 const StyledTextFieldComponent: React.FC<IStyledTextFieldComponentProps> =
-  ({ classes, ...restProps }) => {
+  ({classes, ...restProps}) => {
     const inputProps = {
       ...restProps.InputProps,
       classes: {

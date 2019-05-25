@@ -34,6 +34,11 @@ export const exchangeCurrency = (
     return;
   }
 
+  const balanceFrom = state.balances[currencyFrom] || 0;
+  if (amountFrom > balanceFrom) {
+    return;
+  }
+
   return dispatch({
     data: {
       amountFrom,

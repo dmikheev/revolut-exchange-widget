@@ -59,6 +59,7 @@ const ExchangeWidget: React.FC<IExchangeWidgetProps> = ({
       isSourceCurrency={true}
       onAmountChange={onAmountFromChange}
       onCurrencyChange={onCurrencyFromChange}
+      onInputEnterPress={isExchangeButtonDisabled ? undefined : onExchange}
     />
     <CurrencyRow
       className={styles.row}
@@ -72,6 +73,7 @@ const ExchangeWidget: React.FC<IExchangeWidgetProps> = ({
       rate={rateTo}
       onAmountChange={onAmountToChange}
       onCurrencyChange={onCurrencyToChange}
+      onInputEnterPress={isExchangeButtonDisabled ? undefined : onExchange}
     />
     <div className={styles.button_row}>
       <Button variant="contained" color="primary" disabled={isExchangeButtonDisabled} size="large" onClick={onExchange}>

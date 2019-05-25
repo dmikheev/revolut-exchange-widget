@@ -14,6 +14,7 @@ import { TextFieldProps } from '@material-ui/core/TextField';
 import classNames from 'classnames';
 import React from 'react';
 import { Currency, SymbolByCurrency } from '../../../constants/currencies';
+import { KeyCode } from '../../../constants/keyCodes';
 import { cashFormat } from '../../../utils/cashFormat';
 import CashInput from './CashInput';
 
@@ -32,6 +33,7 @@ interface ICurrencyRowProps {
   rate?: number;
   onAmountChange(amount: string): void;
   onCurrencyChange(currency: Currency): void;
+  onInputEnterPress?(): void;
 }
 
 const CurrencyRow: React.FC<ICurrencyRowProps> = ({
@@ -47,6 +49,7 @@ const CurrencyRow: React.FC<ICurrencyRowProps> = ({
   rate,
   onAmountChange,
   onCurrencyChange,
+  onInputEnterPress,
 }) => {
   const onCurrencySelectChange = React.useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => onCurrencyChange(event.target.value as Currency),
@@ -55,6 +58,14 @@ const CurrencyRow: React.FC<ICurrencyRowProps> = ({
   const onInputChange = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => onAmountChange(event.target.value),
     [onAmountChange],
+  );
+  const onInputKeyPress = React.useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (onInputEnterPress && event.which === KeyCode.ENTER) {
+        onInputEnterPress();
+      }
+    },
+    [onInputEnterPress],
   );
 
   const selectItemsHtml = currencies.map((cur) => (
@@ -89,6 +100,7 @@ const CurrencyRow: React.FC<ICurrencyRowProps> = ({
           value={amountStr}
           InputProps={{inputProps: {className: styles.input}}}
           onChange={onInputChange}
+          onKeyPress={onInputKeyPress}
         />
         <div className={styles.rate_wrap}>
           {rateContentHtml}

@@ -16,7 +16,9 @@ interface IExchangeWidgetProps {
   currencies: Currency[];
   currencyFrom: Currency;
   currencyTo: Currency;
+  isExchangeButtonDisabled: boolean;
   isRateFetching: boolean;
+  isSourceBalanceError: boolean;
   rateTo?: number;
 
   onAmountFromChange(value: string): void;
@@ -35,7 +37,9 @@ const ExchangeWidget: React.FC<IExchangeWidgetProps> = ({
   currencies,
   currencyFrom,
   currencyTo,
+  isExchangeButtonDisabled,
   isRateFetching,
+  isSourceBalanceError,
   rateTo,
   onAmountFromChange,
   onAmountToChange,
@@ -51,6 +55,7 @@ const ExchangeWidget: React.FC<IExchangeWidgetProps> = ({
       currencies={currencies}
       currency={currencyFrom}
       sourceCurrency={currencyFrom}
+      isBalanceError={isSourceBalanceError}
       isSourceCurrency={true}
       onAmountChange={onAmountFromChange}
       onCurrencyChange={onCurrencyFromChange}
@@ -69,7 +74,7 @@ const ExchangeWidget: React.FC<IExchangeWidgetProps> = ({
       onCurrencyChange={onCurrencyToChange}
     />
     <div className={styles.button_row}>
-      <Button variant="contained" color="primary" size="large" onClick={onExchange}>
+      <Button variant="contained" color="primary" disabled={isExchangeButtonDisabled} size="large" onClick={onExchange}>
         Exchange
       </Button>
     </div>

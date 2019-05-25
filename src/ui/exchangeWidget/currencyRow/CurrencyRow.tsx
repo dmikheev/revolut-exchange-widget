@@ -26,12 +26,11 @@ interface ICurrencyRowProps {
   currencies: Currency[];
   currency: Currency;
   sourceCurrency: Currency;
+  isBalanceError?: boolean;
   isRateFetching?: boolean;
   isSourceCurrency?: boolean;
   rate?: number;
-
   onAmountChange(amount: string): void;
-
   onCurrencyChange(currency: Currency): void;
 }
 
@@ -42,16 +41,13 @@ const CurrencyRow: React.FC<ICurrencyRowProps> = ({
   currencies,
   currency,
   sourceCurrency,
+  isBalanceError,
   isRateFetching,
   isSourceCurrency,
   rate,
   onAmountChange,
   onCurrencyChange,
 }) => {
-  const selectItemsHtml = currencies.map((cur) => (
-    <MenuItem key={cur} value={cur}>{cur}</MenuItem>
-  ));
-
   const onCurrencySelectChange = React.useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => onCurrencyChange(event.target.value as Currency),
     [onCurrencyChange],
@@ -60,6 +56,10 @@ const CurrencyRow: React.FC<ICurrencyRowProps> = ({
     (event: React.ChangeEvent<HTMLInputElement>) => onAmountChange(event.target.value),
     [onAmountChange],
   );
+
+  const selectItemsHtml = currencies.map((cur) => (
+    <MenuItem key={cur} value={cur}>{cur}</MenuItem>
+  ));
 
   let amountColumnHtml;
   if (isSourceCurrency || currency !== sourceCurrency) {
@@ -85,6 +85,7 @@ const CurrencyRow: React.FC<ICurrencyRowProps> = ({
     amountColumnHtml = (
       <React.Fragment>
         <StyledTextField
+          error={isBalanceError}
           value={amountStr}
           InputProps={{inputProps: {className: styles.input}}}
           onChange={onInputChange}
@@ -105,7 +106,7 @@ const CurrencyRow: React.FC<ICurrencyRowProps> = ({
             {selectItemsHtml}
           </Select>
         </FormControl>
-        <Typography variant="body2" className={styles.note}>
+        <Typography variant="body2" className={styles.note} color={isBalanceError ? 'error' : undefined}>
           You have {SymbolByCurrency[currency]}{cashFormat(balance)}
         </Typography>
       </div>

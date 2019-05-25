@@ -65,10 +65,15 @@ class ExchangeWidgetContainer
     prevProps: IExchangeWidgetContainerProps,
     prevState: IExchangeWidgetContainerState,
   ): void {
+    const { rates } = this.props;
     const { currencyTo } = this.state;
 
     if (currencyTo !== prevState.currencyTo) {
       this.fetchRatesAndSetTimeout();
+    }
+
+    if (rates !== prevProps.rates) {
+      this.onRatesChange();
     }
   }
 
@@ -76,7 +81,13 @@ class ExchangeWidgetContainer
     const { backgroundColor, balances, className, currencies, rates } = this.props;
     const { amountFromStr, amountToStr, currencyFrom, currencyTo } = this.state;
 
+    const amountFrom = parseCash(amountFromStr);
+    const balanceFrom = balances[currencyFrom] || 0;
     const currencyToData = rates[currencyTo];
+
+    const isSourceBalanceError = !isNaN(amountFrom) && balanceFrom < amountFrom;
+    const isExchangeButtonDisabled =
+      isNaN(amountFrom) || isSourceBalanceError || !this.getRateTo(currencyFrom, currencyTo);
 
     return (
       <ExchangeWidget
@@ -84,12 +95,14 @@ class ExchangeWidgetContainer
         className={className}
         amountFromStr={amountFromStr}
         amountToStr={amountToStr}
-        balanceFrom={balances[currencyFrom] || 0}
+        balanceFrom={balanceFrom}
         balanceTo={balances[currencyTo] || 0}
         currencies={currencies}
         currencyFrom={currencyFrom}
         currencyTo={currencyTo}
+        isExchangeButtonDisabled={isExchangeButtonDisabled}
         isRateFetching={!!currencyToData && currencyToData.isFetching}
+        isSourceBalanceError={isSourceBalanceError}
         rateTo={this.getRateTo(currencyFrom, currencyTo)}
         onAmountFromChange={this.onAmountFromChange}
         onAmountToChange={this.onAmountToChange}
@@ -156,6 +169,10 @@ class ExchangeWidgetContainer
       amountToStr: '',
     });
   };
+
+  private onRatesChange(): void {
+    this.onAmountFromChange(this.state.amountFromStr);
+  }
 
   private getRateTo(currencyFrom: Currency, currencyTo: Currency): number | undefined {
     const { rates } = this.props;

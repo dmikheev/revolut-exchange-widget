@@ -1,22 +1,15 @@
 import { Paper, Typography } from '@material-ui/core';
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators, Dispatch } from 'redux';
 import { Currency } from '../constants/currencies';
-import { exchangeCurrency } from '../data/actions/balanceActions';
-import { IBalancesState, IAppState } from '../data/reducers/rootState';
+import { IBalancesState } from '../data/reducers/rootState';
 import ExchangeWidgetContainer from './exchangeWidget/ExchangeWidgetContainer';
 
 import styles from './App.module.css';
 
-interface IAppStateProps {
+interface IAppProps {
   balances: IBalancesState;
-}
-interface IAppDispatchProps {
   exchangeCurrency(currencyFrom: Currency, amountFrom: number, currencyTo: Currency): void;
 }
-
-type IAppProps = IAppStateProps & IAppDispatchProps;
 const App: React.FC<IAppProps> = ({ balances, exchangeCurrency: exchangeCurrencyProp }) => (
   <div className={styles.app}>
     <Typography variant="h4" gutterBottom={true}>
@@ -33,15 +26,4 @@ const App: React.FC<IAppProps> = ({ balances, exchangeCurrency: exchangeCurrency
     </Paper>
   </div>
 );
-
-type MapStateFunc = (state: IAppState) => IAppStateProps;
-const mapState: MapStateFunc = (state) => ({
-  balances: state.balances,
-});
-
-type MapDispatchFunc = (dispatch: Dispatch) => IAppDispatchProps;
-const mapDispatch: MapDispatchFunc = (dispatch) => bindActionCreators({
-  exchangeCurrency,
-}, dispatch);
-
-export default connect(mapState, mapDispatch)(App);
+export default App;

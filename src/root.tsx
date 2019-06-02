@@ -10,7 +10,7 @@ import { JssProvider } from 'react-jss';
 import { Provider } from 'react-redux';
 import { Currency } from './constants/currencies';
 import createStore from './data/store';
-import App from './ui/App';
+import AppContainer from './ui/AppContainer';
 import muiTheme from './ui/muiTheme';
 
 const generateClassName = createGenerateClassName();
@@ -32,7 +32,7 @@ const Root: React.FC = () => (
     <MuiThemeProvider theme={muiTheme}>
       <CssBaseline/>
       <Provider store={store}>
-        <App/>
+        <AppContainer/>
       </Provider>
     </MuiThemeProvider>
   </JssProvider>

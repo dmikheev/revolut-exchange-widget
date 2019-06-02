@@ -1,10 +1,7 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators, Dispatch } from 'redux';
 import { Currency } from '../../constants/currencies';
-import { fetchRatesForCurrency } from '../../data/actions/rateActions';
 import { getBalanceForCurrency } from '../../data/reducers/balanceHelpers';
-import { IBalancesState, IRatesState, IAppState } from '../../data/reducers/rootState';
+import { IBalancesState, IRatesState } from '../../data/reducers/rootState';
 import { cashFormat } from '../../utils/cashFormat';
 import { isCashStringValid } from '../../utils/isCashStringValid';
 import ExchangeWidget from './ExchangeWidget';
@@ -12,38 +9,29 @@ import { parseCash } from "../../utils/parseCash";
 
 const UPDATE_RATES_INTERVAL = 10000;
 
-interface IExchangeWidgetContainerOwnProps {
+interface IExchangeWidgetControllerProps {
   backgroundColor: string;
   className?: string;
   balances: IBalancesState;
   currencies: Currency[];
-
-  onExchange(currencyFrom: Currency, amountFrom: number, currencyTo: Currency): void;
-}
-interface IExchangeWidgetContainerStateProps {
   rates: IRatesState;
-}
-interface IExchangeWidgetContainerDispatchProps {
+  onExchange(currencyFrom: Currency, amountFrom: number, currencyTo: Currency): void;
   fetchRatesForCurrency(currency: Currency): void;
 }
-type IExchangeWidgetContainerProps =
-  IExchangeWidgetContainerOwnProps
-  & IExchangeWidgetContainerStateProps
-  & IExchangeWidgetContainerDispatchProps;
 
-interface IExchangeWidgetContainerState {
+interface IExchangeWidgetControllerState {
   amountFromStr: string;
   amountToStr: string;
   currencyFrom: Currency;
   currencyTo: Currency;
 }
 
-class ExchangeWidgetContainer
-  extends React.PureComponent<IExchangeWidgetContainerProps, IExchangeWidgetContainerState> {
+export default class ExchangeWidgetController
+  extends React.PureComponent<IExchangeWidgetControllerProps, IExchangeWidgetControllerState> {
 
   private updateRatesTimeoutId: number | null = null;
 
-  constructor(props: IExchangeWidgetContainerProps) {
+  constructor(props: IExchangeWidgetControllerProps) {
     super(props);
 
     const { currencies } = props;
@@ -63,8 +51,8 @@ class ExchangeWidgetContainer
   }
 
   public componentDidUpdate(
-    prevProps: IExchangeWidgetContainerProps,
-    prevState: IExchangeWidgetContainerState,
+    prevProps: IExchangeWidgetControllerProps,
+    prevState: IExchangeWidgetControllerState,
   ): void {
     const { rates } = this.props;
     const { currencyTo } = this.state;
@@ -227,17 +215,3 @@ class ExchangeWidgetContainer
     }
   }
 }
-
-type MapStateFunc = (state: IAppState, ownProps: IExchangeWidgetContainerOwnProps) =>
-  IExchangeWidgetContainerStateProps;
-const mapState: MapStateFunc = (state) => ({
-  rates: state.rates,
-});
-
-type MapDispatchFunc = (dispatch: Dispatch, ownProps: IExchangeWidgetContainerOwnProps) =>
-  IExchangeWidgetContainerDispatchProps;
-const mapDispatch: MapDispatchFunc = (dispatch) => bindActionCreators({
-  fetchRatesForCurrency,
-}, dispatch);
-
-export default connect(mapState, mapDispatch)(ExchangeWidgetContainer);

@@ -48,6 +48,8 @@
     "@types/material-ui": "^0.21.6",
     "@types/react-jss": "^8.6.3",
     "@types/react-redux": "^7.0.8",
-    "@types/redux-logger": "^3.0.7"
+    "@types/redux-logger": "^3.0.7",
+    "@types/redux-mock-store": "^1.0.1",
+    "redux-mock-store": "^1.5.3"
   }
 }

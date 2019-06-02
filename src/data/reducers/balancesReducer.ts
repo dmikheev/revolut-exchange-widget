@@ -1,5 +1,6 @@
 import { BalanceActionType } from '../actions/balanceActions';
 import { IAppAction } from '../actions/IAppAction';
+import { getBalanceForCurrency } from './balanceHelpers';
 import { IBalancesState } from './rootState';
 
 export default function balancesReducer(
@@ -10,8 +11,8 @@ export default function balancesReducer(
     case BalanceActionType.EXCHANGE_CURRENCY:
       return {
         ...state,
-        [action.data.currencyFrom]: (state[action.data.currencyFrom] || 0) - action.data.amountFrom,
-        [action.data.currencyTo]: (state[action.data.currencyTo] || 0) + action.data.amountTo,
+        [action.data.currencyFrom]: getBalanceForCurrency(state, action.data.currencyFrom) - action.data.amountFrom,
+        [action.data.currencyTo]: getBalanceForCurrency(state, action.data.currencyTo) + action.data.amountTo,
       };
 
     default:

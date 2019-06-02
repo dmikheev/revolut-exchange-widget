@@ -1,9 +1,9 @@
 import { combineReducers } from 'redux';
 import balances from './balancesReducer';
 import rates from './ratesReducer';
-import { IRootState } from './rootState';
+import { IAppState } from './rootState';
 
-export default combineReducers<IRootState>({
+export default combineReducers<IAppState>({
   balances,
   rates,
 });

@@ -1,9 +1,9 @@
 import { applyMiddleware, compose, createStore as createReduxStore, Middleware } from 'redux';
 import thunk from 'redux-thunk';
 import rootReducer from './reducers/rootReducer';
-import { IRootState } from './reducers/rootState';
+import { IAppState } from './reducers/rootState';
 
-export default function createStore(initialState: Partial<IRootState>) {
+export default function createStore(initialState: Partial<IAppState>) {
   const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
   const middlewares: Middleware[] = [];

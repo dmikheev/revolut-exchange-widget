@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { Currency } from '../constants/currencies';
 import { exchangeCurrency } from '../data/actions/balanceActions';
-import { IBalancesState, IRootState } from '../data/reducers/rootState';
+import { IBalancesState, IAppState } from '../data/reducers/rootState';
 import ExchangeWidgetContainer from './exchangeWidget/ExchangeWidgetContainer';
 
 import styles from './App.module.css';
@@ -34,7 +34,7 @@ const App: React.FC<IAppProps> = ({ balances, exchangeCurrency: exchangeCurrency
   </div>
 );
 
-type MapStateFunc = (state: IRootState) => IAppStateProps;
+type MapStateFunc = (state: IAppState) => IAppStateProps;
 const mapState: MapStateFunc = (state) => ({
   balances: state.balances,
 });

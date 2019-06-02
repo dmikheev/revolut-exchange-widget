@@ -1,6 +1,6 @@
 import { Currency } from '../../constants/currencies';
 
-export interface IRootState {
+export interface IAppState {
   balances: IBalancesState;
   rates: IRatesState;
 }
@@ -19,7 +19,7 @@ interface ICurrencyDataBase {
   rates?: ICurrencyRatesData;
 }
 type ICurrencyRatesData = {
-  [key in Currency]: number;
+  [key in Currency]?: number;
 };
 
 interface ICurrencyDataLoaded extends ICurrencyDataBase {
@@ -28,6 +28,5 @@ interface ICurrencyDataLoaded extends ICurrencyDataBase {
 }
 interface ICurrencyDataNotLoaded extends ICurrencyDataBase {
   isLoaded: false;
-  rates: undefined;
 }
 export type ICurrencyData = ICurrencyDataLoaded | ICurrencyDataNotLoaded;

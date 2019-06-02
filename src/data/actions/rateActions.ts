@@ -1,7 +1,7 @@
 import { Dispatch } from 'redux';
 import erApi, { IApiResponse } from '../../api/exchangeRatesApi';
 import { Currency } from '../../constants/currencies';
-import { IRootState } from '../reducers/rootState';
+import { IAppState } from '../reducers/rootState';
 
 export enum RateActionType {
   FETCH_RATES_REQUEST = 'FETCH_RATES_REQUEST',
@@ -44,14 +44,14 @@ const fetchRatesResponseError = (currency: Currency) => ({
 });
 
 export const fetchRatesForCurrency = (currency: Currency) =>
-  (dispatch: Dispatch, getState: () => IRootState) => {
+  (dispatch: Dispatch, getState: () => IAppState) => {
     const currencyState = getState().rates[currency];
     if (currencyState && currencyState.isFetching) {
       return;
     }
 
     dispatch(fetchRatesRequest(currency));
-    erApi.get(currency)
+    return erApi.get(currency)
       .then((response) => dispatch(fetchRatesResponseSuccess(currency, response)))
       .catch(() => dispatch(fetchRatesResponseError(currency)));
   };

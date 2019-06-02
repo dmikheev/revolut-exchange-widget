@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { Currency } from '../../constants/currencies';
 import { fetchRatesForCurrency } from '../../data/actions/rateActions';
-import { IBalancesState, IRatesState, IRootState } from '../../data/reducers/rootState';
+import { getBalanceForCurrency } from '../../data/reducers/balanceHelpers';
+import { IBalancesState, IRatesState, IAppState } from '../../data/reducers/rootState';
 import { cashFormat } from '../../utils/cashFormat';
 import { isCashStringValid } from '../../utils/isCashStringValid';
 import ExchangeWidget from './ExchangeWidget';
@@ -82,7 +83,7 @@ class ExchangeWidgetContainer
     const { amountFromStr, amountToStr, currencyFrom, currencyTo } = this.state;
 
     const amountFrom = parseCash(amountFromStr);
-    const balanceFrom = balances[currencyFrom] || 0;
+    const balanceFrom = getBalanceForCurrency(balances, currencyFrom);
     const currencyToData = rates[currencyTo];
 
     const isSourceBalanceError = !isNaN(amountFrom) && balanceFrom < amountFrom;
@@ -96,7 +97,7 @@ class ExchangeWidgetContainer
         amountFromStr={amountFromStr}
         amountToStr={amountToStr}
         balanceFrom={balanceFrom}
-        balanceTo={balances[currencyTo] || 0}
+        balanceTo={getBalanceForCurrency(balances, currencyTo)}
         currencies={currencies}
         currencyFrom={currencyFrom}
         currencyTo={currencyTo}
@@ -227,7 +228,7 @@ class ExchangeWidgetContainer
   }
 }
 
-type MapStateFunc = (state: IRootState, ownProps: IExchangeWidgetContainerOwnProps) =>
+type MapStateFunc = (state: IAppState, ownProps: IExchangeWidgetContainerOwnProps) =>
   IExchangeWidgetContainerStateProps;
 const mapState: MapStateFunc = (state) => ({
   rates: state.rates,

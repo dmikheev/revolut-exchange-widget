@@ -4,7 +4,7 @@ export interface IApiResponse {
   base: Currency;
   date: string;
   rates: {
-    [key in Currency]: number;
+    [key in Currency]?: number;
   };
 }
 

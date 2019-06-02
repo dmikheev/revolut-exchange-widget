@@ -15,7 +15,7 @@ export type IRatesState = {
 
 interface ICurrencyDataBase {
   isFetching: boolean;
-  isLoaded: boolean;
+  isLoaded?: boolean;
   rates?: ICurrencyRatesData;
 }
 type ICurrencyRatesData = {
@@ -27,6 +27,6 @@ interface ICurrencyDataLoaded extends ICurrencyDataBase {
   rates: ICurrencyRatesData;
 }
 interface ICurrencyDataNotLoaded extends ICurrencyDataBase {
-  isLoaded: false;
+  isLoaded?: false;
 }
 export type ICurrencyData = ICurrencyDataLoaded | ICurrencyDataNotLoaded;

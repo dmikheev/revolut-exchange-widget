@@ -20,7 +20,7 @@ import CashInput from './CashInput';
 
 import styles from './CurrencyRow.module.css';
 
-interface ICurrencyRowProps {
+export interface ICurrencyRowProps {
   className?: string;
   amountStr: string;
   balance: number;

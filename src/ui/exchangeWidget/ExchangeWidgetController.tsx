@@ -9,7 +9,7 @@ import { parseCash } from "../../utils/parseCash";
 
 const UPDATE_RATES_INTERVAL = 10000;
 
-interface IExchangeWidgetControllerProps {
+export interface IExchangeWidgetControllerProps {
   backgroundColor: string;
   className?: string;
   balances: IBalancesState;
@@ -35,8 +35,11 @@ export default class ExchangeWidgetController
     super(props);
 
     const { currencies } = props;
+    if (currencies.length === 0) {
+      throw new Error('Currency list must not be empty in ExchangeWidgetController!');
+    }
 
-    const currencyFrom = currencies[0] || Currency.USD;
+    const currencyFrom = currencies[0];
 
     this.state = {
       amountFromStr: '',

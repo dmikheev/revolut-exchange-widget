@@ -7,17 +7,22 @@ import { isCashStringValid } from '../../utils/isCashStringValid';
 import ExchangeWidget from './ExchangeWidget';
 import { parseCash } from "../../utils/parseCash";
 
-const UPDATE_RATES_INTERVAL = 10000;
+const DEFAULT_UPDATE_RATES_INTERVAL = 10000;
 
 export interface IExchangeWidgetControllerProps {
   backgroundColor: string;
   className?: string;
   balances: IBalancesState;
   currencies: Currency[];
+  fetchTimeout?: number;
   rates: IRatesState;
   onExchange(currencyFrom: Currency, amountFrom: number, currencyTo: Currency): void;
   fetchRatesForCurrency(currency: Currency): void;
 }
+interface IDefaultProps {
+  fetchTimeout: number;
+}
+type IProps = IExchangeWidgetControllerProps & IDefaultProps;
 
 interface IExchangeWidgetControllerState {
   amountFromStr: string;
@@ -26,12 +31,10 @@ interface IExchangeWidgetControllerState {
   currencyTo: Currency;
 }
 
-export default class ExchangeWidgetController
-  extends React.PureComponent<IExchangeWidgetControllerProps, IExchangeWidgetControllerState> {
-
+class ExchangeWidgetController extends React.PureComponent<IProps, IExchangeWidgetControllerState> {
   private updateRatesTimeoutId: number | null = null;
 
-  constructor(props: IExchangeWidgetControllerProps) {
+  constructor(props: IProps) {
     super(props);
 
     const { currencies } = props;
@@ -199,7 +202,7 @@ export default class ExchangeWidgetController
   }
 
   private fetchRatesAndSetTimeout(): void {
-    const { fetchRatesForCurrency: fetchRatesForCurrencyProp } = this.props;
+    const { fetchTimeout, fetchRatesForCurrency: fetchRatesForCurrencyProp } = this.props;
     const { currencyTo } = this.state;
 
     this.clearTimeout();
@@ -209,7 +212,7 @@ export default class ExchangeWidgetController
     // поэтому приведём вручную к number
     this.updateRatesTimeoutId = setTimeout(() => {
       this.fetchRatesAndSetTimeout();
-    }, UPDATE_RATES_INTERVAL) as unknown as number;
+    }, fetchTimeout) as unknown as number;
   }
 
   private clearTimeout(): void {
@@ -218,3 +221,11 @@ export default class ExchangeWidgetController
     }
   }
 }
+
+const ComponentWithDefaults =
+  ExchangeWidgetController as React.ComponentClass<IExchangeWidgetControllerProps, IExchangeWidgetControllerState>;
+ComponentWithDefaults.defaultProps = {
+  fetchTimeout: DEFAULT_UPDATE_RATES_INTERVAL,
+};
+
+export default ComponentWithDefaults;

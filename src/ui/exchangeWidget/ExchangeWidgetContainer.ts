@@ -10,6 +10,7 @@ interface IExchangeWidgetControllerOwnProps {
   className?: string;
   balances: IBalancesState;
   currencies: Currency[];
+  fetchTimeout?: number;
 
   onExchange(currencyFrom: Currency, amountFrom: number, currencyTo: Currency): void;
 }

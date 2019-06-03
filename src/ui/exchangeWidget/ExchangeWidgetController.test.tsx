@@ -36,3 +36,20 @@ it('throws an error if the currency list is empty', () => {
     expect(e).toBeInstanceOf(Error);
   }
 });
+
+it('calls fetchRatesForCurrency 2 times in fetchTimeout*1.5 time (on mount and after fetchTimeout)', async () => {
+  const timeout = 1000;
+  const fetchFunc = jest.fn();
+  shallow(
+    <ExchangeWidgetController {...testProps} fetchTimeout={timeout} fetchRatesForCurrency={fetchFunc}/>
+  );
+  await sleep(timeout * 1.5);
+
+  expect(fetchFunc).toHaveBeenCalledTimes(2);
+});
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}

@@ -21,9 +21,3 @@ it('shallow renders without crashing', () => {
     <CurrencyRow {...testProps}/>
   );
 });
-
-it('shallow renders without crashing with balance error', () => {
-  shallow(
-    <CurrencyRow {...testProps} isBalanceError={true}/>
-  );
-});

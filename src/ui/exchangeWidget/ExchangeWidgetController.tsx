@@ -5,7 +5,7 @@ import { IBalancesState, IRatesState } from '../../data/reducers/rootState';
 import { cashFormat } from '../../utils/cashFormat';
 import { isCashStringValid } from '../../utils/isCashStringValid';
 import ExchangeWidget from './ExchangeWidget';
-import { parseCash } from "../../utils/parseCash";
+import { parseCash } from '../../utils/parseCash';
 
 const DEFAULT_UPDATE_RATES_INTERVAL = 10000;
 

@@ -14,8 +14,8 @@ it('calls onChange only with correct values', () => {
   expect(inputFind).toHaveLength(1);
 
   inputFind.simulate('change', { target: { value: 'abc' } });
-  expect(onChange).not.toHaveBeenCalled();
+  expect(onChange).not.toBeCalled();
 
   inputFind.simulate('change', { target: { value: '12.34' } });
-  expect(onChange).toHaveBeenCalledTimes(1);
+  expect(onChange).toBeCalledTimes(1);
 });

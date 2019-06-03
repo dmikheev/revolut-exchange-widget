@@ -2,9 +2,9 @@ import { Button } from '@material-ui/core';
 import classNames from 'classnames';
 import React from 'react';
 import { Currency } from '../../constants/currencies';
+import CurrencyRow from './currencyRow/CurrencyRow';
 
 import styles from './ExchangeWidget.module.css';
-import CurrencyRow from "./currencyRow/CurrencyRow";
 
 interface IExchangeWidgetProps {
   backgroundColor: string;

@@ -1,6 +1,6 @@
 import { CircularProgress, MenuItem, Select, Typography } from '@material-ui/core';
 import { MenuItemProps } from '@material-ui/core/MenuItem';
-import { cleanup, fireEvent, render, waitForElement } from '@testing-library/react';
+import { cleanup, fireEvent, render } from '@testing-library/react';
 import { mount, shallow } from 'enzyme';
 import React from 'react';
 import { Currency, SymbolByCurrency } from '../../../constants/currencies';

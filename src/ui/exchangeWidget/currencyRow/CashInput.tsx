@@ -1,7 +1,7 @@
 import React from 'react';
-import { TextFieldProps } from "@material-ui/core/TextField";
-import { TextField } from "@material-ui/core";
-import { isCashStringValid } from "../../../utils/isCashStringValid";
+import { TextFieldProps } from '@material-ui/core/TextField';
+import { TextField } from '@material-ui/core';
+import { isCashStringValid } from '../../../utils/isCashStringValid';
 
 const CashInput: React.FC<TextFieldProps> = ({ onChange: onChangeProp, ...restProps }) => {
   const onChange = React.useCallback(

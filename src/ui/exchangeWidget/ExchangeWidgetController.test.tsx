@@ -1,7 +1,7 @@
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import React from 'react';
-import { Currency } from '../../constants/currencies';
+import { Currency, CurrencyPair } from '../../constants/currencies';
 import { IBalancesState, IRatesState } from '../../data/reducers/rootState';
 import ExchangeWidget from './ExchangeWidget';
 import ExchangeWidgetController, { IExchangeWidgetControllerProps } from './ExchangeWidgetController';
@@ -15,17 +15,16 @@ const testProps: IExchangeWidgetControllerProps = {
   },
   currencies: currencies,
   rates: {
-    [Currency.EUR]: {
+    [CurrencyPair.USD_EUR]: {
+      data: {
+        [Currency.USD]: 0.5,
+      },
       isFetching: false,
       isLoaded: true,
-      rates: {
-        [Currency.USD]: 1.33,
-        [Currency.GBP]: 0.88,
-      },
     },
   },
+  fetchRates: () => {},
   onExchange: () => {},
-  fetchRatesForCurrency: () => {},
 };
 
 it('renders correctly', () => {
@@ -61,7 +60,7 @@ it('calls fetchRatesForCurrency 2 times in fetchTimeout*1.5 time (on mount and a
   const timeout = 1000;
   const fetchFunc = jest.fn();
   shallow(
-    <ExchangeWidgetController {...testProps} fetchTimeout={timeout} fetchRatesForCurrency={fetchFunc}/>
+    <ExchangeWidgetController {...testProps} fetchTimeout={timeout} fetchRates={fetchFunc}/>
   );
   await sleep(timeout * 1.5);
 
@@ -85,14 +84,13 @@ it('sets amountTo according to the rate if the amountFrom changes', () => {
   const currencies = [Currency.USD, Currency.EUR];
   const amountFromStr = '10';
   const amountToStr = '5';
-  const rate = 2;
   const rates: IRatesState = {
-    [Currency.EUR]: {
+    [CurrencyPair.USD_EUR]: {
+      data: {
+        [Currency.USD]: 0.5,
+      },
       isFetching: false,
       isLoaded: true,
-      rates: {
-        [Currency.USD]: rate,
-      },
     },
   };
   const wrapper = shallow(
@@ -101,7 +99,6 @@ it('sets amountTo according to the rate if the amountFrom changes', () => {
 
   const view1 = wrapper.find(ExchangeWidget);
   expect(view1).toHaveLength(1);
-
   view1.props().onAmountFromChange(amountFromStr);
 
   const view2 = wrapper.find(ExchangeWidget);
@@ -110,16 +107,15 @@ it('sets amountTo according to the rate if the amountFrom changes', () => {
 
 it('sets amountFrom according to rate if the amountTo changes', () => {
   const currencies = [Currency.USD, Currency.EUR];
-  const amountFromStr = '6';
+  const amountFromStr = '8';
   const amountToStr = '2';
-  const rate = 3;
   const rates: IRatesState = {
-    [Currency.EUR]: {
+    [CurrencyPair.USD_EUR]: {
+      data: {
+        [Currency.USD]: 0.25,
+      },
       isFetching: false,
       isLoaded: true,
-      rates: {
-        [Currency.USD]: rate,
-      },
     },
   };
   const wrapper = shallow(
@@ -128,7 +124,6 @@ it('sets amountFrom according to rate if the amountTo changes', () => {
 
   const view1 = wrapper.find(ExchangeWidget);
   expect(view1).toHaveLength(1);
-
   view1.props().onAmountToChange(amountToStr);
 
   const view2 = wrapper.find(ExchangeWidget);
@@ -139,15 +134,14 @@ it('updates amountTo if currencyFrom changes', () => {
   const currencies = [Currency.USD, Currency.EUR, Currency.GBP];
   const currencyFrom2 = Currency.GBP;
   const amountFromStr = '10';
-  const amountToStr = '5';
-  const rate = 2;
+  const amountToStr = '30';
   const rates: IRatesState = {
-    [Currency.EUR]: {
+    [CurrencyPair.EUR_GBP]: {
+      data: {
+        [Currency.GBP]: 3,
+      },
       isFetching: false,
       isLoaded: true,
-      rates: {
-        [Currency.GBP]: rate,
-      },
     },
   };
   const wrapper = shallow(
@@ -172,14 +166,13 @@ it('updates amountTo if currencyTo changes', () => {
   const currencyTo2 = Currency.GBP;
   const amountFromStr = '10';
   const amountToStr = '5';
-  const rate = 2;
   const rates: IRatesState = {
-    [Currency.GBP]: {
+    [CurrencyPair.USD_GBP]: {
+      data: {
+        [Currency.USD]: 0.5,
+      },
       isFetching: false,
       isLoaded: true,
-      rates: {
-        [Currency.USD]: rate,
-      },
     },
   };
   const wrapper = shallow(
@@ -199,15 +192,16 @@ it('updates amountTo if currencyTo changes', () => {
   expect(view3.props().amountToStr).toEqual(amountToStr);
 });
 
-it('fetches rates if the currencyTo changes', async () => {
+it('fetches rates if any currency changes', async () => {
   const currencies = [Currency.USD, Currency.EUR, Currency.GBP];
+  const currencyFrom = Currency.EUR;
   const currencyTo = Currency.GBP;
   const fetchFunc = jest.fn();
   const wrapper = shallow(
     <ExchangeWidgetController
       {...testProps}
       currencies={currencies}
-      fetchRatesForCurrency={fetchFunc}
+      fetchRates={fetchFunc}
     />
   );
 
@@ -218,25 +212,32 @@ it('fetches rates if the currencyTo changes', async () => {
   view1.props().onCurrencyToChange(currencyTo);
 
   expect(fetchFunc).toBeCalledTimes(1);
+
+  fetchFunc.mockClear();
+
+  const view2 = wrapper.find(ExchangeWidget);
+  expect(view2).toHaveLength(1);
+  view2.props().onCurrencyFromChange(currencyFrom);
+
+  expect(fetchFunc).toBeCalledTimes(1);
 });
 
 it('calls onExchange with the right values', () => {
   const currencies = [Currency.USD, Currency.EUR, Currency.GBP];
   const amountFrom = 10;
   const amountFromStr = '10';
-  const rate = 2;
   const currencyFrom = Currency.EUR;
   const currencyTo = Currency.GBP;
   const balances: IBalancesState = {
     [Currency.EUR]: 100,
   };
   const rates: IRatesState = {
-    [Currency.GBP]: {
+    [CurrencyPair.EUR_GBP]: {
+      data: {
+        [Currency.EUR]: 0.5,
+      },
       isFetching: false,
       isLoaded: true,
-      rates: {
-        [Currency.EUR]: rate,
-      },
     },
   };
   const onExchange = jest.fn();
@@ -274,25 +275,25 @@ it('updates amountTo if rates change', () => {
   const currencies = [Currency.USD, Currency.EUR];
   const amountFromStr = '100';
   const rate1 = 2;
-  const amountToStr1 = '50';
+  const amountToStr1 = '200';
   const rate2 = 5;
-  const amountToStr2 = '20';
+  const amountToStr2 = '500';
   const rates1: IRatesState = {
-    [Currency.EUR]: {
-      isFetching: false,
-      isLoaded: true,
-      rates: {
+    [CurrencyPair.USD_EUR]: {
+      data: {
         [Currency.USD]: rate1,
       },
+      isFetching: false,
+      isLoaded: true,
     },
   };
   const rates2: IRatesState = {
-    [Currency.EUR]: {
-      isFetching: false,
-      isLoaded: true,
-      rates: {
+    [CurrencyPair.USD_EUR]: {
+      data: {
         [Currency.USD]: rate2,
       },
+      isFetching: false,
+      isLoaded: true,
     },
   };
 
@@ -319,7 +320,7 @@ it('updates amountTo if rates change', () => {
 it('forwards isRateFetching if rates are being fetched', () => {
   const currencies = [Currency.USD, Currency.EUR];
   const rates: IRatesState = {
-    [Currency.EUR]: {
+    [CurrencyPair.USD_EUR]: {
       isFetching: true,
     },
   };

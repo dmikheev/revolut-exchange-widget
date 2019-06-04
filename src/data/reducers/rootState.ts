@@ -1,4 +1,5 @@
-import { Currency } from '../../constants/currencies';
+import { IPairRatesData } from '../../api/currencyConverterApi';
+import { Currency, CurrencyPair } from '../../constants/currencies';
 
 export interface IAppState {
   balances: IBalancesState;
@@ -10,23 +11,20 @@ export type IBalancesState = {
 };
 
 export type IRatesState = {
-  [key in Currency]?: ICurrencyData;
+  [key in CurrencyPair]?: IPairRates;
 };
 
-interface ICurrencyDataBase {
+interface IPairRatesBase {
+  data?: IPairRatesData;
   isFetching: boolean;
   isLoaded?: boolean;
-  rates?: ICurrencyRatesData;
 }
-type ICurrencyRatesData = {
-  [key in Currency]?: number;
-};
 
-interface ICurrencyDataLoaded extends ICurrencyDataBase {
+interface IPairRatesLoaded extends IPairRatesBase {
+  data: IPairRatesData;
   isLoaded: true;
-  rates: ICurrencyRatesData;
 }
-interface ICurrencyDataNotLoaded extends ICurrencyDataBase {
+interface IPairRatesNotLoaded extends IPairRatesBase {
   isLoaded?: false;
 }
-export type ICurrencyData = ICurrencyDataLoaded | ICurrencyDataNotLoaded;
+export type IPairRates = IPairRatesLoaded | IPairRatesNotLoaded;

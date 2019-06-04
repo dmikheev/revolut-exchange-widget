@@ -25,6 +25,6 @@ exports[`renders correctly 1`] = `
   onCurrencyFromChange={[Function]}
   onCurrencyToChange={[Function]}
   onExchange={[Function]}
-  rateTo={1.33}
+  rateTo={2}
 />
 `;

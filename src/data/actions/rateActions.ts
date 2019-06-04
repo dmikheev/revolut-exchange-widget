@@ -1,6 +1,6 @@
 import { Dispatch } from 'redux';
-import erApi, { IApiResponse } from '../../api/exchangeRatesApi';
-import { Currency } from '../../constants/currencies';
+import ccApi, { IPairRatesData } from '../../api/currencyConverterApi';
+import { Currency, CurrencyPair, getCurrencyPair } from '../../constants/currencies';
 import { IAppState } from '../reducers/rootState';
 
 export enum RateActionType {
@@ -11,49 +11,50 @@ export enum RateActionType {
 
 interface IFetchRatesRequestAction {
   data: {
-    currency: Currency;
+    pair: CurrencyPair;
   };
   type: RateActionType.FETCH_RATES_REQUEST;
 }
-const fetchRatesRequest = (currency: Currency) => ({
-  data: { currency },
+const fetchRatesRequest = (pair: CurrencyPair) => ({
+  data: { pair },
   type: RateActionType.FETCH_RATES_REQUEST,
 });
 
 interface IFetchRatesResponseSuccessAction {
   data: {
-    currency: Currency;
-    response: IApiResponse;
+    pair: CurrencyPair;
+    response: IPairRatesData;
   };
   type: RateActionType.FETCH_RATES_RESPONSE_SUCCESS;
 }
-const fetchRatesResponseSuccess = (currency: Currency, response: IApiResponse) => ({
-  data: { currency, response },
+const fetchRatesResponseSuccess = (pair: CurrencyPair, response: IPairRatesData) => ({
+  data: { pair, response },
   type: RateActionType.FETCH_RATES_RESPONSE_SUCCESS,
 });
 
 interface IFetchRatesResponseErrorAction {
   data: {
-    currency: Currency;
+    pair: CurrencyPair;
   };
   type: RateActionType.FETCH_RATES_RESPONSE_ERROR;
 }
-const fetchRatesResponseError = (currency: Currency) => ({
-  data: { currency },
+const fetchRatesResponseError = (pair: CurrencyPair) => ({
+  data: { pair },
   type: RateActionType.FETCH_RATES_RESPONSE_ERROR,
 });
 
-export const fetchRatesForCurrency = (currency: Currency) =>
+export const fetchRates = (cur1: Currency, cur2: Currency) =>
   (dispatch: Dispatch, getState: () => IAppState) => {
-    const currencyState = getState().rates[currency];
+    const pair = getCurrencyPair(cur1, cur2);
+    const currencyState = getState().rates[pair];
     if (currencyState && currencyState.isFetching) {
       return;
     }
 
-    dispatch(fetchRatesRequest(currency));
-    return erApi.get(currency)
-      .then((response) => dispatch(fetchRatesResponseSuccess(currency, response)))
-      .catch(() => dispatch(fetchRatesResponseError(currency)));
+    dispatch(fetchRatesRequest(pair));
+    return ccApi.get(cur1, cur2)
+      .then((response) => dispatch(fetchRatesResponseSuccess(pair, response)))
+      .catch(() => dispatch(fetchRatesResponseError(pair)));
   };
 
 export type IRateAction =

@@ -5,38 +5,38 @@ import { IRatesState } from './rootState';
 export default function ratesReducer(state: IRatesState = {}, action: IAppAction): IRatesState {
   switch (action.type) {
     case RateActionType.FETCH_RATES_REQUEST: {
-      const currencyState = state[action.data.currency];
+      const pairState = state[action.data.pair];
 
       return {
         ...state,
-        [action.data.currency]: {
-          ...currencyState,
+        [action.data.pair]: {
+          ...pairState,
           isFetching: true,
         },
       };
     }
 
     case RateActionType.FETCH_RATES_RESPONSE_SUCCESS: {
-      const currencyState = state[action.data.currency];
+      const pairState = state[action.data.pair];
 
       return {
         ...state,
-        [action.data.currency]: {
-          ...currencyState,
+        [action.data.pair]: {
+          ...pairState,
+          data: action.data.response,
           isFetching: false,
           isLoaded: true,
-          rates: action.data.response.rates,
         },
       };
     }
 
     case RateActionType.FETCH_RATES_RESPONSE_ERROR: {
-      const currencyState = state[action.data.currency];
+      const pairState = state[action.data.pair];
 
       return {
         ...state,
-        [action.data.currency]: {
-          ...currencyState,
+        [action.data.pair]: {
+          ...pairState,
           isFetching: false,
         },
       };

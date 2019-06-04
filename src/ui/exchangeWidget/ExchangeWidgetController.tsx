@@ -76,13 +76,9 @@ class ExchangeWidgetController extends React.PureComponent<IProps, IExchangeWidg
     const { backgroundColor, balances, className, currencies, rates } = this.props;
     const { amountFromStr, amountToStr, currencyFrom, currencyTo } = this.state;
 
-    const amountFrom = parseCash(amountFromStr);
     const balanceFrom = getBalanceForCurrency(balances, currencyFrom);
     const currencyToData = rates[currencyTo];
-
-    const isSourceBalanceError = !isNaN(amountFrom) && balanceFrom < amountFrom;
-    const isExchangeButtonDisabled =
-      isNaN(amountFrom) || isSourceBalanceError || !this.getRateTo(currencyFrom, currencyTo);
+    const rateTo = this.getRateTo(currencyFrom, currencyTo);
 
     return (
       <ExchangeWidget
@@ -95,10 +91,10 @@ class ExchangeWidgetController extends React.PureComponent<IProps, IExchangeWidg
         currencies={currencies}
         currencyFrom={currencyFrom}
         currencyTo={currencyTo}
-        isExchangeButtonDisabled={isExchangeButtonDisabled}
+        isExchangeDisabled={this.isExchangeDisabled()}
         isRateFetching={!!currencyToData && currencyToData.isFetching}
-        isSourceBalanceError={isSourceBalanceError}
-        rateTo={this.getRateTo(currencyFrom, currencyTo)}
+        isSourceBalanceError={this.isSourceBalanceError()}
+        rateTo={rateTo}
         onAmountFromChange={this.onAmountFromChange}
         onAmountToChange={this.onAmountToChange}
         onCurrencyFromChange={this.onCurrencyFromChange}
@@ -151,11 +147,12 @@ class ExchangeWidgetController extends React.PureComponent<IProps, IExchangeWidg
   private onExchangeClick = (): void => {
     const { onExchange } = this.props;
     const { amountFromStr, currencyFrom, currencyTo } = this.state;
-    const amountFrom = parseCash(amountFromStr);
 
-    if (isNaN(amountFrom)) {
+    if (this.isExchangeDisabled()) {
       return;
     }
+
+    const amountFrom = parseCash(amountFromStr);
 
     onExchange(currencyFrom, amountFrom, currencyTo);
 
@@ -199,6 +196,23 @@ class ExchangeWidgetController extends React.PureComponent<IProps, IExchangeWidg
     }
 
     return amountToStr;
+  }
+
+  private isExchangeDisabled(): boolean {
+    const { amountFromStr, currencyFrom, currencyTo } = this.state;
+    const amountFrom = parseCash(amountFromStr);
+
+    return isNaN(amountFrom) || this.isSourceBalanceError() || !this.getRateTo(currencyFrom, currencyTo);
+  }
+
+  private isSourceBalanceError(): boolean {
+    const { balances } = this.props;
+    const { amountFromStr, currencyFrom } = this.state;
+
+    const amountFrom = parseCash(amountFromStr);
+    const balanceFrom = getBalanceForCurrency(balances, currencyFrom);
+
+    return !isNaN(amountFrom) && balanceFrom < amountFrom;
   }
 
   private fetchRatesAndSetTimeout(): void {

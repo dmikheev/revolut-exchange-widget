@@ -1,4 +1,5 @@
-import { mount, shallow } from 'enzyme';
+import { TextField } from '@material-ui/core';
+import { shallow } from 'enzyme';
 import React from 'react';
 import CashInput from './CashInput';
 
@@ -8,14 +9,15 @@ it('shallow renders without crashing', () => {
 
 it('calls onChange only with correct values', () => {
   const onChange = jest.fn();
-  const cashInput = mount(<CashInput onChange={onChange}/>);
+  const cashInput = shallow(<CashInput onChange={onChange}/>);
 
-  const inputFind = cashInput.find('input');
-  expect(inputFind).toHaveLength(1);
+  const muiTextField = cashInput.find(TextField);
+  expect(muiTextField).toHaveLength(1);
 
-  inputFind.simulate('change', { target: { value: 'abc' } });
+  expect(muiTextField.props().onChange).toBeTruthy();
+  muiTextField.props().onChange!({ target: { value: 'abc' } } as React.ChangeEvent<HTMLInputElement>);
   expect(onChange).not.toBeCalled();
 
-  inputFind.simulate('change', { target: { value: '12.34' } });
+  muiTextField.props().onChange!({ target: { value: '12.34' } } as React.ChangeEvent<HTMLInputElement>);
   expect(onChange).toBeCalledTimes(1);
 });

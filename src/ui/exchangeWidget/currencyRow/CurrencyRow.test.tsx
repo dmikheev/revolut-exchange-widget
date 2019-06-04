@@ -1,12 +1,12 @@
 import { CircularProgress, MenuItem, Select, Typography } from '@material-ui/core';
 import { MenuItemProps } from '@material-ui/core/MenuItem';
-import { cleanup, fireEvent, render } from '@testing-library/react';
+import { cleanup, render } from '@testing-library/react';
 import { mount, shallow } from 'enzyme';
 import React from 'react';
 import { Currency, SymbolByCurrency } from '../../../constants/currencies';
 import { KeyCode } from '../../../constants/keyCodes';
 import CashInput from './CashInput';
-import CurrencyRow, { ICurrencyRowProps } from './CurrencyRow';
+import CurrencyRow, { ICurrencyRowProps, StyledTextField } from './CurrencyRow';
 
 const currencies = [Currency.USD, Currency.EUR];
 const nop = () => {};
@@ -29,26 +29,24 @@ it('shallow renders without crashing', () => {
 
 it('adds className to the container element', () => {
   const className = 'test';
-  const wrapper = mount(<CurrencyRow {...testProps} className={className}/>);
+  const wrapper = shallow(<CurrencyRow {...testProps} className={className}/>);
 
   expect(wrapper.hasClass(className)).toBeTruthy();
 });
 
-it('shows amount in the input', () => {
+it('forwards amount to the input', () => {
   const amountStr = '10';
-  const wrapper = mount(<CurrencyRow {...testProps} amountStr={amountStr}/>);
+  const wrapper = shallow(<CurrencyRow {...testProps} amountStr={amountStr}/>);
 
-  const inputFind = wrapper.find('input[type="text"]');
-  expect(inputFind).toHaveLength(1);
-
-  const input: HTMLInputElement = inputFind.getDOMNode();
-  expect(input.value).toEqual(amountStr);
+  const input = wrapper.find(StyledTextField);
+  expect(input).toHaveLength(1);
+  expect(input.props().value).toEqual(amountStr);
 });
 
-it('renders select with option for each currency and current currency as value', () => {
+it('renders select with option for each currency and the current currency as value', () => {
   const testCurrencies = [Currency.USD, Currency.EUR, Currency.GBP];
   const currentCurrency = Currency.USD;
-  const wrapper = mount(<CurrencyRow {...testProps} currency={currentCurrency} currencies={testCurrencies}/>);
+  const wrapper = shallow(<CurrencyRow {...testProps} currency={currentCurrency} currencies={testCurrencies}/>);
 
   const selectFind = wrapper.find(Select);
   expect(selectFind).toHaveLength(1);
@@ -142,7 +140,7 @@ it('shows input with error state and balance text with error color if there is a
 });
 
 it('shows exchange rate loader if required props are specified and rate is fetching', () => {
-  const wrapper = mount(
+  const wrapper = shallow(
     <CurrencyRow
       {...testProps}
       currency={Currency.EUR}
@@ -155,37 +153,39 @@ it('shows exchange rate loader if required props are specified and rate is fetch
   expect(wrapper.find(CircularProgress)).toHaveLength(1);
 });
 
-it('calls onAmountChange with correct value when input changes', () => {
+it('calls onAmountChange with the correct value when the input changes', () => {
   const value = '12.34';
   const onAmountChange = jest.fn();
-  const wrapper = mount(<CurrencyRow {...testProps} onAmountChange={onAmountChange}/>);
+  const wrapper = shallow(<CurrencyRow {...testProps} onAmountChange={onAmountChange}/>);
 
-  const inputFind = wrapper.find('input[type="text"]');
-  expect(inputFind).toHaveLength(1);
+  const input = wrapper.find(StyledTextField);
+  expect(input).toHaveLength(1);
 
-  inputFind.simulate('change', { target: { value } });
+  expect(input.props().onChange).toBeTruthy();
+  input.props().onChange!({ target: { value } } as React.ChangeEvent<HTMLInputElement>);
   expect(onAmountChange).toBeCalledTimes(1);
   expect(onAmountChange).toHaveBeenLastCalledWith(value);
 });
 
 it('calls onInputEnterPress when Enter has been pressed in the input', () => {
   const onInputEnterPress = jest.fn();
-  const wrapper = mount(<CurrencyRow {...testProps} onInputEnterPress={onInputEnterPress}/>);
+  const wrapper = shallow(<CurrencyRow {...testProps} onInputEnterPress={onInputEnterPress}/>);
 
-  const inputFind = wrapper.find('input[type="text"]');
-  expect(inputFind).toHaveLength(1);
+  const input = wrapper.find(StyledTextField);
+  expect(input).toHaveLength(1);
 
-  inputFind.simulate('keypress', { which: KeyCode.DIGIT_1 });
+  expect(input.props().onKeyPress).toBeTruthy();
+  input.props().onKeyPress!({ which: KeyCode.DIGIT_1 } as React.KeyboardEvent<HTMLInputElement>);
   expect(onInputEnterPress).not.toBeCalled();
 
-  inputFind.simulate('keypress', { which: KeyCode.ENTER });
+  input.props().onKeyPress!({ which: KeyCode.ENTER } as React.KeyboardEvent<HTMLInputElement>);
   expect(onInputEnterPress).toBeCalledTimes(1);
 });
 
 it('calls onCurrencyChange when currency has been selected', async () => {
   const currencyToChoose = Currency.EUR;
   const onCurrencyChange = jest.fn();
-  const { findByText, getByRole } = render(
+  const wrapper = shallow(
     <CurrencyRow
       {...testProps}
       currencies={[Currency.USD, Currency.EUR]}
@@ -194,13 +194,10 @@ it('calls onCurrencyChange when currency has been selected', async () => {
     />
   );
 
-  const selectOpenButton = getByRole('button');
-  expect(selectOpenButton).toBeTruthy();
-  fireEvent.click(selectOpenButton);
-
-  const itemToChoose = await findByText(currencyToChoose);
-  expect(itemToChoose).toBeTruthy();
-  fireEvent.click(itemToChoose);
+  const select = wrapper.find(Select);
+  expect(select).toHaveLength(1);
+  expect(select.props().onChange).toBeTruthy();
+  select.props().onChange!({ target: { value: currencyToChoose } } as React.ChangeEvent<HTMLSelectElement>, undefined);
 
   expect(onCurrencyChange).toBeCalledTimes(1);
   expect(onCurrencyChange).toHaveBeenLastCalledWith(currencyToChoose);

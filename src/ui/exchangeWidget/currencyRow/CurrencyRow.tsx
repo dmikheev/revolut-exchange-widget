@@ -148,4 +148,4 @@ const StyledTextFieldComponent: React.FC<IStyledTextFieldComponentProps> =
       <CashInput {...restProps} InputProps={inputProps}/>
     );
   };
-const StyledTextField = withStyles(textFieldStyles)(StyledTextFieldComponent);
+export const StyledTextField = withStyles(textFieldStyles)(StyledTextFieldComponent);

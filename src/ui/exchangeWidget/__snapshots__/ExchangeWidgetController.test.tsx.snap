@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<ExchangeWidget
+  amountFromStr=""
+  amountToStr=""
+  backgroundColor="#fff"
+  balanceFrom={111}
+  balanceTo={222}
+  className="test"
+  currencies={
+    Array [
+      "USD",
+      "EUR",
+      "GBP",
+    ]
+  }
+  currencyFrom="USD"
+  currencyTo="EUR"
+  isExchangeDisabled={true}
+  isRateFetching={false}
+  isSourceBalanceError={false}
+  onAmountFromChange={[Function]}
+  onAmountToChange={[Function]}
+  onCurrencyFromChange={[Function]}
+  onCurrencyToChange={[Function]}
+  onExchange={[Function]}
+  rateTo={1.33}
+/>
+`;

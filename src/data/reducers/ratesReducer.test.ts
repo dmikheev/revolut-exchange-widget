@@ -1,4 +1,4 @@
-import { Currency, CurrencyPair } from '../../constants/currencies';
+import { Currency } from '../../constants/currencies';
 import { RateActionType } from '../actions/rateActions';
 import reducer from './ratesReducer';
 
@@ -8,86 +8,105 @@ describe('Rates reducer', () => {
   });
 
   it('handles the FETCH_RATES_REQUEST action', () => {
-    const pair = CurrencyPair.USD_EUR;
     expect(reducer(
       {
-        [pair]: {
+        [Currency.USD]: {
           isFetching: false,
         },
       },
       {
-        data: { pair },
+        data: {
+          currency: Currency.USD,
+        },
         type: RateActionType.FETCH_RATES_REQUEST,
       },
     )).toEqual({
-      [pair]: {
+      [Currency.USD]: {
         isFetching: true,
       },
     });
 
     expect(reducer({}, {
-      data: { pair },
+      data: {
+        currency: Currency.USD,
+      },
       type: RateActionType.FETCH_RATES_REQUEST,
     })).toEqual({
-      [pair]: {
+      [Currency.USD]: {
         isFetching: true,
       },
     });
   });
 
   it('handles the FETCH_RATES_RESPONSE_SUCCESS action', () => {
-    const pair = CurrencyPair.USD_EUR;
-    const response = {
-      [Currency.USD]: 0.8,
-      [Currency.EUR]: 1.2,
-    };
     expect(reducer(
       {
-        [pair]: {
+        [Currency.USD]: {
           isFetching: true,
         },
       },
       {
-        data: { pair, response },
+        data: {
+          currency: Currency.USD,
+          response: {
+            base: Currency.USD,
+            date: '2019-05-31',
+            rates: {
+              [Currency.EUR]: 0.8,
+            },
+          },
+        },
         type: RateActionType.FETCH_RATES_RESPONSE_SUCCESS,
       },
     )).toEqual({
-      [pair]: {
-        data: response,
+      [Currency.USD]: {
         isFetching: false,
         isLoaded: true,
+        rates: {
+          [Currency.EUR]: 0.8,
+        },
       },
     });
 
     expect(reducer(
       {},
       {
-        data: { pair, response },
+        data: {
+          currency: Currency.USD,
+          response: {
+            base: Currency.USD,
+            date: '2019-05-31',
+            rates: {
+              [Currency.EUR]: 0.8,
+            },
+          },
+        },
         type: RateActionType.FETCH_RATES_RESPONSE_SUCCESS,
       },
     )).toEqual({
-      [pair]: {
-        data: response,
+      [Currency.USD]: {
         isFetching: false,
         isLoaded: true,
+        rates: {
+          [Currency.EUR]: 0.8,
+        },
       },
     });
   });
 
   it('handles the FETCH_RATES_RESPONSE_ERROR action', () => {
-    const pair = CurrencyPair.USD_EUR;
     expect(reducer(
       {
-        [pair]: {
+        [Currency.USD]: {
           isFetching: true,
         },
       },
       {
-        data: { pair },
+        data: { currency: Currency.USD },
         type: RateActionType.FETCH_RATES_RESPONSE_ERROR,
       },
     )).toEqual({
-      [pair]: {
+      [Currency.USD]: {
         isFetching: false,
       },
     });
@@ -95,11 +114,11 @@ describe('Rates reducer', () => {
     expect(reducer(
       {},
       {
-        data: { pair },
+        data: { currency: Currency.USD },
         type: RateActionType.FETCH_RATES_RESPONSE_ERROR,
       },
     )).toEqual({
-      [pair]: {
+      [Currency.USD]: {
         isFetching: false,
       },
     });

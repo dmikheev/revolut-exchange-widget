@@ -1,5 +1,5 @@
 import React from 'react';
-import { Currency, getCurrencyPair } from '../../constants/currencies';
+import { Currency } from '../../constants/currencies';
 import { getBalanceForCurrency } from '../../data/reducers/balanceHelpers';
 import { IBalancesState, IRatesState } from '../../data/reducers/rootState';
 import { cashFormat } from '../../utils/cashFormat';
@@ -17,7 +17,7 @@ export interface IExchangeWidgetControllerProps {
   fetchTimeout?: number;
   rates: IRatesState;
   onExchange(currencyFrom: Currency, amountFrom: number, currencyTo: Currency): void;
-  fetchRates(cur1: Currency, cur2: Currency): void;
+  fetchRatesForCurrency(currency: Currency): void;
 }
 interface IDefaultProps {
   fetchTimeout: number;
@@ -61,9 +61,9 @@ class ExchangeWidgetController extends React.PureComponent<IProps, IExchangeWidg
     prevState: IExchangeWidgetControllerState,
   ): void {
     const { rates } = this.props;
-    const { currencyFrom, currencyTo } = this.state;
+    const { currencyTo } = this.state;
 
-    if (currencyFrom !== prevState.currencyFrom || currencyTo !== prevState.currencyTo) {
+    if (currencyTo !== prevState.currencyTo) {
       this.fetchRatesAndSetTimeout();
     }
 
@@ -76,7 +76,9 @@ class ExchangeWidgetController extends React.PureComponent<IProps, IExchangeWidg
     const { backgroundColor, balances, className, currencies, rates } = this.props;
     const { amountFromStr, amountToStr, currencyFrom, currencyTo } = this.state;
 
-    const ratesData = rates[getCurrencyPair(currencyFrom, currencyTo)];
+    const balanceFrom = getBalanceForCurrency(balances, currencyFrom);
+    const currencyToData = rates[currencyTo];
+    const rateTo = this.getRateTo(currencyFrom, currencyTo);
 
     return (
       <ExchangeWidget
@@ -84,15 +86,15 @@ class ExchangeWidgetController extends React.PureComponent<IProps, IExchangeWidg
         className={className}
         amountFromStr={amountFromStr}
         amountToStr={amountToStr}
-        balanceFrom={getBalanceForCurrency(balances, currencyFrom)}
+        balanceFrom={balanceFrom}
         balanceTo={getBalanceForCurrency(balances, currencyTo)}
         currencies={currencies}
         currencyFrom={currencyFrom}
         currencyTo={currencyTo}
         isExchangeDisabled={this.isExchangeDisabled()}
-        isRateFetching={!!ratesData && ratesData.isFetching}
+        isRateFetching={!!currencyToData && currencyToData.isFetching}
         isSourceBalanceError={this.isSourceBalanceError()}
-        rateTo={this.getRateTo(currencyFrom, currencyTo)}
+        rateTo={rateTo}
         onAmountFromChange={this.onAmountFromChange}
         onAmountToChange={this.onAmountToChange}
         onCurrencyFromChange={this.onCurrencyFromChange}
@@ -164,17 +166,13 @@ class ExchangeWidgetController extends React.PureComponent<IProps, IExchangeWidg
     this.onAmountFromChange(this.state.amountFromStr);
   }
 
-  private getRateFrom(currencyFrom: Currency, currencyTo: Currency): number | undefined {
-    const { rates } = this.props;
-    const ratesData = rates[getCurrencyPair(currencyFrom, currencyTo)];
-
-    return (ratesData && ratesData.isLoaded && ratesData.data[currencyFrom]) || undefined;
-  }
-
   private getRateTo(currencyFrom: Currency, currencyTo: Currency): number | undefined {
-    const rateFrom = this.getRateFrom(currencyFrom, currencyTo);
+    const { rates } = this.props;
 
-    return rateFrom ? 1 / rateFrom : undefined;
+    const currencyToData = rates[currencyTo];
+
+    return (currencyToData && currencyToData.isLoaded && currencyToData.rates[currencyFrom])
+      || undefined;
   }
 
   private getAmountToStr(
@@ -188,10 +186,10 @@ class ExchangeWidgetController extends React.PureComponent<IProps, IExchangeWidg
       const amountFrom = parseCash(amountFromStr);
 
       if (!isNaN(amountFrom)) {
-        const rate = this.getRateFrom(currencyFrom, currencyTo);
+        const rate = this.getRateTo(currencyFrom, currencyTo);
 
         if (rate) {
-          const amountTo = isInversed ? amountFrom / rate : amountFrom * rate;
+          const amountTo = isInversed ? amountFrom * rate : amountFrom / rate;
           amountToStr = cashFormat(amountTo);
         }
       }
@@ -204,7 +202,7 @@ class ExchangeWidgetController extends React.PureComponent<IProps, IExchangeWidg
     const { amountFromStr, currencyFrom, currencyTo } = this.state;
     const amountFrom = parseCash(amountFromStr);
 
-    return isNaN(amountFrom) || this.isSourceBalanceError() || !this.getRateFrom(currencyFrom, currencyTo);
+    return isNaN(amountFrom) || this.isSourceBalanceError() || !this.getRateTo(currencyFrom, currencyTo);
   }
 
   private isSourceBalanceError(): boolean {
@@ -218,12 +216,12 @@ class ExchangeWidgetController extends React.PureComponent<IProps, IExchangeWidg
   }
 
   private fetchRatesAndSetTimeout(): void {
-    const { fetchTimeout, fetchRates } = this.props;
-    const { currencyFrom, currencyTo } = this.state;
+    const { fetchTimeout, fetchRatesForCurrency: fetchRatesForCurrencyProp } = this.props;
+    const { currencyTo } = this.state;
 
     this.clearTimeout();
 
-    fetchRates(currencyFrom, currencyTo);
+    fetchRatesForCurrencyProp(currencyTo);
     // TS берёт тип из NodeJS.setTimeout, который возвращает Timeout вместо number,
     // поэтому приведём вручную к number
     this.updateRatesTimeoutId = setTimeout(() => {

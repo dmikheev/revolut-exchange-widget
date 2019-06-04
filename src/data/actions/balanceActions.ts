@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux';
-import { Currency, getCurrencyPair } from '../../constants/currencies';
+import { Currency } from '../../constants/currencies';
 import { getBalanceForCurrency } from '../reducers/balanceHelpers';
 import { IAppState } from '../reducers/rootState';
 
@@ -25,12 +25,12 @@ export const exchangeCurrency = (
 ) => (dispatch: Dispatch, getState: () => IAppState) => {
   const state = getState();
 
-  const rates = state.rates[getCurrencyPair(currencyFrom, currencyTo)];
-  if (!rates || !rates.isLoaded) {
+  const currencyToData = state.rates[currencyTo];
+  if (!currencyToData || !currencyToData.isLoaded) {
     return;
   }
 
-  const rate = rates.data[currencyFrom];
+  const rate = currencyToData.rates[currencyFrom];
   if (rate === undefined) {
     return;
   }
@@ -43,7 +43,7 @@ export const exchangeCurrency = (
   return dispatch({
     data: {
       amountFrom,
-      amountTo: amountFrom * rate,
+      amountTo: amountFrom / rate,
       currencyFrom,
       currencyTo,
     },

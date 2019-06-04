@@ -1,5 +1,5 @@
 import { Currency } from '../constants/currencies';
-import erApi from './exchangeRatesApi';
+import rApi from './ratesApi';
 
 describe('exchangeRatesApi', () => {
   it('fetches data from the right url', async () => {
@@ -12,15 +12,15 @@ describe('exchangeRatesApi', () => {
     });
     jest.spyOn(globalAny, 'fetch').mockImplementation(() => mockFetchPromise);
 
-    await erApi.get(Currency.USD);
+    await rApi.get(Currency.USD);
     expect(globalAny.fetch).toHaveBeenCalledTimes(1);
     expect(globalAny.fetch)
-      .toHaveBeenLastCalledWith('https://api.exchangeratesapi.io/latest?base=USD');
+      .toHaveBeenLastCalledWith('https://api.ratesapi.io/latest?base=USD');
 
-    await erApi.get(Currency.EUR);
+    await rApi.get(Currency.EUR);
     expect(globalAny.fetch).toHaveBeenCalledTimes(2);
     expect(globalAny.fetch)
-      .toHaveBeenLastCalledWith('https://api.exchangeratesapi.io/latest?base=EUR');
+      .toHaveBeenLastCalledWith('https://api.ratesapi.io/latest?base=EUR');
 
     globalAny.fetch.mockRestore();
   });
@@ -36,7 +36,7 @@ describe('exchangeRatesApi', () => {
     });
     jest.spyOn(globalAny, 'fetch').mockImplementationOnce(() => mockFetchPromise);
 
-    const apiPromise = erApi.get(Currency.USD);
+    const apiPromise = rApi.get(Currency.USD);
     await expect(apiPromise).resolves.toBe(mockSuccessResponse);
     expect(globalAny.fetch).toHaveBeenCalledTimes(1);
 
@@ -52,7 +52,7 @@ describe('exchangeRatesApi', () => {
 
     expect.assertions(1);
 
-    const apiPromise = erApi.get(Currency.USD);
+    const apiPromise = rApi.get(Currency.USD);
     await expect(apiPromise).rejects.toHaveProperty('ok', false);
 
     globalAny.fetch.mockRestore();

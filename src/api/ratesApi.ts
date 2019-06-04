@@ -9,10 +9,10 @@ export interface IApiResponse {
 }
 
 function getUrlForCurrency(cur: Currency): string {
-  return `https://api.exchangeratesapi.io/latest?base=${cur}`;
+  return `https://api.ratesapi.io/latest?base=${cur}`;
 }
 
-const erApi = {
+const rApi = {
   get(baseCurrency: Currency): Promise<IApiResponse> {
     return fetch(getUrlForCurrency(baseCurrency))
       .then((response) => {
@@ -24,4 +24,4 @@ const erApi = {
       });
   },
 };
-export default erApi;
+export default rApi;

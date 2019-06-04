@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux';
-import erApi, { IApiResponse } from '../../api/exchangeRatesApi';
+import rApi, { IApiResponse } from '../../api/ratesApi';
 import { Currency } from '../../constants/currencies';
 import { IAppState } from '../reducers/rootState';
 
@@ -51,7 +51,7 @@ export const fetchRatesForCurrency = (currency: Currency) =>
     }
 
     dispatch(fetchRatesRequest(currency));
-    return erApi.get(currency)
+    return rApi.get(currency)
       .then((response) => dispatch(fetchRatesResponseSuccess(currency, response)))
       .catch(() => dispatch(fetchRatesResponseError(currency)));
   };

@@ -98,7 +98,7 @@ const CurrencyRow: React.FC<ICurrencyRowProps> = ({
         <StyledTextField
           error={isBalanceError}
           value={amountStr}
-          InputProps={{inputProps: {className: styles.input}}}
+          InputProps={{inputProps: { className: styles.input, inputMode: 'numeric' }}}
           onChange={onInputChange}
           onKeyPress={onInputKeyPress}
         />

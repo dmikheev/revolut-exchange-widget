@@ -52,6 +52,7 @@ exports[`renders correctly 1`] = `
         Object {
           "inputProps": Object {
             "className": "input",
+            "inputMode": "numeric",
           },
         }
       }

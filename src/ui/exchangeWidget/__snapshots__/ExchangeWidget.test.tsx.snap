@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="wrap"
+  style={
+    Object {
+      "backgroundColor": "#fff",
+    }
+  }
+>
+  <CurrencyRow
+    amountStr="111"
+    balance={222}
+    className="row"
+    currencies={
+      Array [
+        "USD",
+        "EUR",
+        "GBP",
+      ]
+    }
+    currency="GBP"
+    isBalanceError={false}
+    isSourceCurrency={true}
+    onAmountChange={[Function]}
+    onCurrencyChange={[Function]}
+    onInputEnterPress={[Function]}
+    sourceCurrency="GBP"
+  />
+  <CurrencyRow
+    amountStr="333"
+    balance={444}
+    className="row"
+    currencies={
+      Array [
+        "USD",
+        "EUR",
+        "GBP",
+      ]
+    }
+    currency="USD"
+    isRateFetching={false}
+    isSourceCurrency={false}
+    onAmountChange={[Function]}
+    onCurrencyChange={[Function]}
+    onInputEnterPress={[Function]}
+    rate={0.75}
+    sourceCurrency="GBP"
+  />
+  <div
+    className="button_row"
+  >
+    <WithStyles(Button)
+      color="primary"
+      disabled={false}
+      onClick={[Function]}
+      size="large"
+      variant="contained"
+    >
+      Exchange
+    </WithStyles(Button)>
+  </div>
+</div>
+`;

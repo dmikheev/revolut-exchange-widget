@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="wrap test-class-name"
+>
+  <div
+    className="column"
+  >
+    <WithStyles(FormControl)>
+      <WithStyles(WithFormControlContext(InputLabel))>
+        To
+      </WithStyles(WithFormControlContext(InputLabel))>
+      <WithStyles(WithFormControlContext(Select))
+        onChange={[Function]}
+        value="EUR"
+      >
+        <WithStyles(MenuItem)
+          key="USD"
+          value="USD"
+        >
+          USD
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="EUR"
+          value="EUR"
+        >
+          EUR
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="GBP"
+          value="GBP"
+        >
+          GBP
+        </WithStyles(MenuItem)>
+      </WithStyles(WithFormControlContext(Select))>
+    </WithStyles(FormControl)>
+    <WithStyles(Typography)
+      className="note"
+      variant="body2"
+    >
+      You have 
+      €
+      222
+    </WithStyles(Typography)>
+  </div>
+  <div
+    className="column"
+  >
+    <WithStyles(StyledTextFieldComponent)
+      InputProps={
+        Object {
+          "inputProps": Object {
+            "className": "input",
+          },
+        }
+      }
+      onChange={[Function]}
+      onKeyPress={[Function]}
+      value="11"
+    />
+    <div
+      className="rate_wrap"
+    >
+      <WithStyles(Typography)
+        className="note"
+        variant="body2"
+      >
+        €
+        1 = 
+        $
+        3.3
+      </WithStyles(Typography)>
+    </div>
+  </div>
+</div>
+`;

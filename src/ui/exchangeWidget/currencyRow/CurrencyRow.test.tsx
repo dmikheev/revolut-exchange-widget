@@ -1,21 +1,21 @@
-import { CircularProgress, MenuItem, Select, Typography } from '@material-ui/core';
-import { MenuItemProps } from '@material-ui/core/MenuItem';
+import { CircularProgress, Select, Typography } from '@material-ui/core';
 import { cleanup, render } from '@testing-library/react';
 import { mount, shallow } from 'enzyme';
+import toJson from 'enzyme-to-json';
 import React from 'react';
 import { Currency, SymbolByCurrency } from '../../../constants/currencies';
 import { KeyCode } from '../../../constants/keyCodes';
 import CashInput from './CashInput';
 import CurrencyRow, { ICurrencyRowProps, StyledTextField } from './CurrencyRow';
 
-const currencies = [Currency.USD, Currency.EUR];
+const currencies = [Currency.USD, Currency.EUR, Currency.GBP];
 const nop = () => {};
 const testProps: ICurrencyRowProps = {
-  amountStr: '10',
-  balance: 100,
+  amountStr: '11',
+  balance: 222,
   currencies,
   currency: Currency.EUR,
-  rate: 2,
+  rate: 3.3,
   sourceCurrency: Currency.USD,
   onAmountChange: nop,
   onCurrencyChange: nop,
@@ -23,65 +23,9 @@ const testProps: ICurrencyRowProps = {
 
 afterEach(cleanup);
 
-it('shallow renders without crashing', () => {
-  shallow(<CurrencyRow {...testProps}/>);
-});
-
-it('adds className to the container element', () => {
-  const className = 'test';
-  const wrapper = shallow(<CurrencyRow {...testProps} className={className}/>);
-
-  expect(wrapper.hasClass(className)).toBeTruthy();
-});
-
-it('forwards amount to the input', () => {
-  const amountStr = '10';
-  const wrapper = shallow(<CurrencyRow {...testProps} amountStr={amountStr}/>);
-
-  const input = wrapper.find(StyledTextField);
-  expect(input).toHaveLength(1);
-  expect(input.props().value).toEqual(amountStr);
-});
-
-it('renders select with option for each currency and the current currency as value', () => {
-  const testCurrencies = [Currency.USD, Currency.EUR, Currency.GBP];
-  const currentCurrency = Currency.USD;
-  const wrapper = shallow(<CurrencyRow {...testProps} currency={currentCurrency} currencies={testCurrencies}/>);
-
-  const selectFind = wrapper.find(Select);
-  expect(selectFind).toHaveLength(1);
-  expect(selectFind.props().value).toEqual(currentCurrency);
-
-  type MenuItemElement = React.ReactElement<typeof MenuItem>;
-  const selectChildren = selectFind.props().children as MenuItemElement[];
-  expect(selectChildren).toHaveLength(testCurrencies.length);
-  expect(selectChildren.map((menuItem) => (menuItem.props as MenuItemProps).value)).toEqual(testCurrencies);
-});
-
-it('shows currency balance', () => {
-  const balance = 100;
-  const currency = Currency.USD;
-  const balanceText = `You have ${SymbolByCurrency[currency]}${balance}`;
-  const { queryByText } = render(<CurrencyRow {...testProps} balance={balance} currency={currency}/>);
-
-  expect(queryByText(balanceText)).toBeTruthy();
-});
-
-it('shows exchange rate if required props are specified', () => {
-  const currencyFrom = Currency.USD;
-  const currencyTo = Currency.EUR;
-  const rate = 2;
-  const rateText = `${SymbolByCurrency[currencyTo]}1 = ${SymbolByCurrency[currencyFrom]}${rate}`;
-  const { queryByText } = render(
-    <CurrencyRow
-      {...testProps}
-      currency={currencyTo}
-      sourceCurrency={currencyFrom}
-      rate={rate}
-    />
-  );
-
-  expect(queryByText(rateText)).toBeTruthy();
+it('renders correctly', () => {
+  const wrapper = shallow(<CurrencyRow {...testProps} className="test-class-name"/>);
+  expect(toJson(wrapper)).toMatchSnapshot();
 });
 
 it('doesn\'t show exchange rate for source currency', () => {
@@ -100,6 +44,21 @@ it('doesn\'t show exchange rate for source currency', () => {
   );
 
   expect(queryByText(rateText)).toBeFalsy();
+});
+
+it('doesn\'t show the amount input if current currency equals source currency', () => {
+  const currencyFrom = Currency.USD;
+  const currencyTo = currencyFrom;
+  const wrapper = mount(
+    <CurrencyRow
+      {...testProps}
+      currency={currencyTo}
+      sourceCurrency={currencyFrom}
+    />
+  );
+
+  const input = wrapper.find(StyledTextField);
+  expect(input).toHaveLength(0);
 });
 
 it('doesn\'t show exchange rate if current currency equals source currency', () => {

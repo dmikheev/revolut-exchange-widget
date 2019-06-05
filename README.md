@@ -1,4 +1,4 @@
-Demo available at https://revolut.dmikheev.now.sh/
+Demo is available at https://revolut.dmikheev.now.sh/
 
 ---
 
